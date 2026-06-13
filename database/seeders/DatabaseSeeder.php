@@ -348,7 +348,7 @@ class DatabaseSeeder extends Seeder
             $member = Member::create([
                 'user_id'      => $user->id,
                 'member_code'  => 'SMT-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
-                'phone'        => null,
+                'phone'        => '01736625062',
                 'address'      => null,
                 'join_date'    => '2025-10-01',
                 'deposit_plan' => 'monthly',
