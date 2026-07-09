@@ -3,33 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') – SUMITY Admin</title>
+    <title>@yield('title', 'Dashboard') – ATTONIRVOR Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#059669">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="ATTONIRVOR">
+    <link rel="apple-touch-icon" href="/image/logo.png">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         [x-cloak] { display: none !important; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; }
     </style>
 </head>
-<body class="bg-gray-100" x-data="{ sidebarOpen: true }">
+<body class="bg-gray-100" x-data="{ sidebarOpen: false }">
 
 <div class="flex h-screen overflow-hidden">
 
+    {{-- Mobile backdrop --}}
+    <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
+         class="fixed inset-0 bg-black/50 z-30 lg:hidden"></div>
+
     {{-- ========== SIDEBAR ========== --}}
     <aside
-        class="flex flex-col flex-shrink-0 bg-gray-900 overflow-y-auto transition-all duration-300 z-40"
-        :class="sidebarOpen ? 'w-64' : 'w-0 lg:w-16'"
-        style="min-width:0;">
+        class="flex flex-col bg-gray-900 overflow-y-auto transition-all duration-300 z-40"
+        :class="sidebarOpen
+            ? 'fixed inset-y-0 left-0 w-64 shadow-2xl lg:shadow-none lg:static'
+            : 'hidden lg:flex lg:w-16'">
 
         {{-- Brand --}}
         <div class="flex items-center gap-3 px-4 py-5 border-b border-gray-700/60 flex-shrink-0">
-            <div class="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                <i class="fas fa-piggy-bank text-white text-base"></i>
-            </div>
+            <img src="/image/logo.png" alt="ATTONIRVOR"
+                 class="w-9 h-9 rounded-xl flex-shrink-0 shadow-lg object-cover">
             <div x-show="sidebarOpen" x-cloak class="overflow-hidden whitespace-nowrap">
-                <p class="text-white font-bold text-base leading-none">SUMITY</p>
+                <p class="text-white font-bold text-base leading-none">ATTONIRVOR</p>
                 <p class="text-emerald-400 text-xs mt-0.5">Admin Panel</p>
             </div>
         </div>
@@ -257,6 +266,54 @@
     </div>
 </div>
 
+<div id="pwa-install" class="fixed bottom-6 right-6 z-50">
+    <div class="flex items-center gap-3 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-medium cursor-pointer hover:bg-emerald-700 transition-all" id="pwa-btn">
+        <i class="fas fa-spinner fa-spin"></i> Checking...
+    </div>
+</div>
+
 @stack('scripts')
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(e => console.warn('SW registration failed:', e));
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    setInstallBtn('Install App', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(() => { deferredPrompt = null; hideInstallBtn(); });
+    });
+});
+
+function setInstallBtn(text, handler) {
+    const el = document.getElementById('pwa-btn');
+    el.innerHTML = '<i class="fas fa-download"></i> ' + text;
+    el.onclick = handler;
+}
+function hideInstallBtn() { document.getElementById('pwa-install').classList.add('hidden'); }
+
+// Already installed (standalone) → hide
+if (window.matchMedia('(display-mode: standalone)').matches) { hideInstallBtn(); }
+else if (window.isSecureContext && 'serviceWorker' in navigator) {
+    setInstallBtn('Install App', () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.finally(() => { deferredPrompt = null; hideInstallBtn(); });
+        } else {
+            alert('PWA is loading. Please wait a moment and try again.');
+        }
+    });
+} else if (!window.isSecureContext) {
+    setInstallBtn('HTTPS Required', () => {
+        alert('PWA requires HTTPS. Use https://samite.test or http://127.0.0.1:8000 (via php artisan serve).');
+    });
+} else {
+    hideInstallBtn();
+}
+</script>
 </body>
 </html>

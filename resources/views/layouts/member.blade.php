@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') – SUMITY Member</title>
+    <title>@yield('title', 'Dashboard') – ATTONIRVOR Member</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#059669">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="ATTONIRVOR">
+    <link rel="apple-touch-icon" href="/image/logo.png">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>[x-cloak] { display: none !important; }</style>
 </head>
@@ -16,11 +21,10 @@
     <nav class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-piggy-bank text-white"></i>
-                </div>
+                <img src="/image/logo.png" alt="ATTONIRVOR"
+                     class="w-9 h-9 rounded-lg object-cover">
                 <div>
-                    <p class="font-bold text-gray-800 leading-none">SUMITY</p>
+                    <p class="font-bold text-gray-800 leading-none">ATTONIRVOR</p>
                     <p class="text-xs text-gray-500">Member Portal</p>
                 </div>
             </div>
@@ -110,10 +114,57 @@
     </main>
 
     <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-400">
-        &copy; {{ date('Y') }} SUMITY – Group Savings Management
+        &copy; {{ date('Y') }} ATTONIRVOR – Group Savings Management
     </footer>
 </div>
 
+<div id="pwa-install" class="fixed bottom-6 right-6 z-50">
+    <div class="flex items-center gap-3 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-medium cursor-pointer hover:bg-emerald-700 transition-all" id="pwa-btn">
+        <i class="fas fa-spinner fa-spin"></i> Checking...
+    </div>
+</div>
+
 @stack('scripts')
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(e => console.warn('SW registration failed:', e));
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    setInstallBtn('Install App', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(() => { deferredPrompt = null; hideInstallBtn(); });
+    });
+});
+
+function setInstallBtn(text, handler) {
+    const el = document.getElementById('pwa-btn');
+    el.innerHTML = '<i class="fas fa-download"></i> ' + text;
+    el.onclick = handler;
+}
+function hideInstallBtn() { document.getElementById('pwa-install').classList.add('hidden'); }
+
+if (window.matchMedia('(display-mode: standalone)').matches) { hideInstallBtn(); }
+else if (window.isSecureContext && 'serviceWorker' in navigator) {
+    setInstallBtn('Install App', () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.finally(() => { deferredPrompt = null; hideInstallBtn(); });
+        } else {
+            alert('PWA is loading. Please wait a moment and try again.');
+        }
+    });
+} else if (!window.isSecureContext) {
+    setInstallBtn('HTTPS Required', () => {
+        alert('PWA requires HTTPS. Use https://samite.test or http://127.0.0.1:8000 (via php artisan serve).');
+    });
+} else {
+    hideInstallBtn();
+}
+</script>
 </body>
 </html>

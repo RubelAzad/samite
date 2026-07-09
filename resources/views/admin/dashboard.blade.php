@@ -103,30 +103,39 @@
                 <h3 class="text-lg font-semibold text-gray-800">Recent Deposits</h3>
                 <a href="{{ route('admin.deposits.index') }}" class="text-sm text-emerald-600 hover:underline">View all</a>
             </div>
-            <div class="space-y-3">
-                @forelse($recentDeposits as $deposit)
-                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs font-bold text-gray-600">
+            <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left font-semibold text-gray-600 text-xs">Member</th>
+                        <th class="px-3 py-2 text-left font-semibold text-gray-600 text-xs">Amount</th>
+                        <th class="px-3 py-2 text-left font-semibold text-gray-600 text-xs">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+            @forelse($recentDeposits as $deposit)
+            <tr class="border-b border-gray-100">
+                <td class="px-3 py-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 bg-gray-200 rounded-full flex items-center justify-center text-xs font-bold text-gray-600 flex-shrink-0">
                             {{ strtoupper(substr($deposit->member->user->name ?? '?', 0, 1)) }}
                         </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-800">{{ $deposit->member->user->name ?? 'N/A' }}</p>
-                            <p class="text-xs text-gray-400">{{ $deposit->date->format('d M Y') }} · {{ ucfirst($deposit->payment_method) }}</p>
-                        </div>
+                        <span class="text-sm text-gray-800">{{ $deposit->member->user->name ?? 'N/A' }}</span>
                     </div>
-                    <div class="text-right">
-                        <p class="text-sm font-semibold text-gray-800">৳{{ number_format($deposit->amount, 0) }}</p>
-                        <span class="text-xs px-2 py-0.5 rounded-full
-                            {{ $deposit->status === 'approved' ? 'bg-green-100 text-green-700' : ($deposit->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
-                            {{ ucfirst($deposit->status) }}
-                        </span>
-                    </div>
-                </div>
-                @empty
-                <p class="text-gray-400 text-sm text-center py-4">No deposits yet</p>
-                @endforelse
-            </div>
+                </td>
+                <td class="px-3 py-2 text-sm font-semibold text-gray-800">৳{{ number_format($deposit->amount, 0) }}</td>
+                <td class="px-3 py-2">
+                    <span class="text-xs px-2 py-0.5 rounded-full
+                        {{ $deposit->status === 'approved' ? 'bg-green-100 text-green-700' : ($deposit->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
+                        {{ ucfirst($deposit->status) }}
+                    </span>
+                </td>
+            </tr>
+            @empty
+            <tr><td colspan="3" class="px-3 py-4 text-center text-gray-400 text-sm">No deposits yet</td></tr>
+            @endforelse
+                </tbody>
+            </table>
         </div>
 
         <!-- Recent Expenses -->
@@ -135,18 +144,28 @@
                 <h3 class="text-lg font-semibold text-gray-800">Recent Expenses</h3>
                 <a href="{{ route('admin.expenses.index') }}" class="text-sm text-emerald-600 hover:underline">View all</a>
             </div>
-            <div class="space-y-3">
+            <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 py-2 text-left font-semibold text-gray-600 text-xs">Title</th>
+                        <th class="px-3 py-2 text-left font-semibold text-gray-600 text-xs">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
                 @forelse($recentExpenses as $expense)
-                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                    <div>
+                <tr class="border-b border-gray-100">
+                    <td class="px-3 py-2">
                         <p class="text-sm font-medium text-gray-800">{{ $expense->title }}</p>
                         <p class="text-xs text-gray-400">{{ $expense->date->format('d M Y') }} · {{ ucfirst($expense->category) }}</p>
-                    </div>
-                    <p class="text-sm font-semibold text-red-600">– ৳{{ number_format($expense->amount, 0) }}</p>
-                </div>
+                    </td>
+                    <td class="px-3 py-2 text-sm font-semibold text-red-600">– ৳{{ number_format($expense->amount, 0) }}</td>
+                </tr>
                 @empty
-                <p class="text-gray-400 text-sm text-center py-4">No expenses yet</p>
+                <tr><td colspan="2" class="px-3 py-4 text-center text-gray-400 text-sm">No expenses yet</td></tr>
                 @endforelse
+                </tbody>
+            </table>
             </div>
         </div>
     </div>

@@ -27,7 +27,7 @@ class YearlyReportExport implements FromArray, WithTitle, ShouldAutoSize
     {
         $rows = [];
 
-        $rows[] = ['SUMITY – Yearly Financial Report'];
+        $rows[] = ['ATTONIRVOR – Yearly Financial Report'];
         $rows[] = ['Year: ' . $this->year];
         $rows[] = ['Generated: ' . now()->format('d M Y H:i')];
         $rows[] = [];

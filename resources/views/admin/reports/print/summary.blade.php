@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Full Summary Report – SUMITY</title>
+<title>Full Summary Report – ATTONIRVOR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -111,7 +111,7 @@ table.matrix-tbl tfoot td.r { text-align: right; }
     <table>
         <tr>
             <td>
-                <div class="org-name">SUMITY</div>
+                <div class="org-name">ATTONIRVOR</div>
                 <div class="org-sub">Group Savings &amp; Expense Management System</div>
             </td>
             <td style="text-align:right;">
@@ -236,7 +236,7 @@ table.matrix-tbl tfoot td.r { text-align: right; }
 @endif
 
 <div class="rpt-footer">
-    SUMITY &mdash; Confidential Full Summary Report &mdash; {{ now()->format('d M Y, H:i') }}
+    ATTONIRVOR &mdash; Confidential Full Summary Report &mdash; {{ now()->format('d M Y, H:i') }}
 </div>
 
 <script>

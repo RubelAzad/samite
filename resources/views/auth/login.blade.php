@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login – SUMITY</title>
+    <title>Login – ATTONIRVOR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#059669">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="ATTONIRVOR">
+    <link rel="apple-touch-icon" href="/image/logo.png">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>[x-cloak] { display: none !important; }</style>
 </head>
@@ -15,9 +20,9 @@
     <!-- Logo -->
     <div class="text-center mb-8">
         <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-xl mb-4">
-            <i class="fas fa-piggy-bank text-4xl text-emerald-600"></i>
+            <img src="/image/logo.png" alt="ATTONIRVOR" class="w-16 h-16 object-cover">
         </div>
-        <h1 class="text-4xl font-bold text-white tracking-wide">SUMITY</h1>
+        <h1 class="text-4xl font-bold text-white tracking-wide">ATTONIRVOR</h1>
         <p class="text-emerald-200 mt-1 text-sm">Group Savings & Expense Management</p>
     </div>
 
@@ -123,9 +128,14 @@
     </div>
 
     <p class="text-center text-emerald-200 text-xs mt-6">
-        &copy; {{ date('Y') }} SUMITY – Group Savings Management
+        &copy; {{ date('Y') }} ATTONIRVOR – Group Savings Management
     </p>
 </div>
 
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+}
+</script>
 </body>
 </html>

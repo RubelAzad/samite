@@ -115,6 +115,7 @@
                     {{ $group->deposits->count() }} payment{{ $group->deposits->count() !== 1 ? 's' : '' }}
                 </span>
             </div>
+            <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
                     <tr>
@@ -152,6 +153,7 @@
                     </tr>
                 </tfoot>
             </table>
+            </div>
         </div>
         @empty
         <div class="bg-white rounded-xl shadow-sm p-12 text-center text-gray-400">

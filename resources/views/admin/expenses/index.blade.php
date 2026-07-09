@@ -33,6 +33,7 @@
 
     <!-- Table -->
     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead class="bg-gray-50 border-b border-gray-200">
                 <tr>
@@ -100,6 +101,7 @@
         </table>
         <div class="px-6 py-4 border-t border-gray-100">
             {{ $expenses->links() }}
+        </div>
         </div>
     </div>
 </div>

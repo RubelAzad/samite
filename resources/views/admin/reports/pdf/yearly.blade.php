@@ -34,7 +34,7 @@ table.data tfoot td.r { text-align: right; }
 <table style="width:100%;border:none;border-bottom:3px solid #059669;padding-bottom:14px;margin-bottom:16px;">
     <tr>
         <td style="border:none;padding:0;">
-            <div class="org-name">SUMITY</div>
+            <div class="org-name">ATTONIRVOR</div>
             <div class="org-sub">Group Savings &amp; Expense Management System</div>
         </td>
         <td style="border:none;padding:0;text-align:right;vertical-align:top;">
@@ -149,7 +149,7 @@ table.data tfoot td.r { text-align: right; }
 </table>
 
 <div class="footer">
-    SUMITY &mdash; Confidential Financial Report &mdash; {{ now()->format('d M Y, H:i') }}
+    ATTONIRVOR &mdash; Confidential Financial Report &mdash; {{ now()->format('d M Y, H:i') }}
 </div>
 </body>
 </html>

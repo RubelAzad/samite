@@ -59,7 +59,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                         Payment Method <span class="text-red-500">*</span>
                     </label>
-                    <div class="grid grid-cols-4 gap-2">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         @foreach([
                             'cash'  => ['label' => 'Cash',  'icon' => 'fa-money-bill-wave', 'color' => 'emerald'],
                             'bkash' => ['label' => 'bKash', 'icon' => 'fa-mobile-alt',       'color' => 'pink'],
