@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\DailyReportExport;
+use App\Exports\MemberWiseReportExport;
 use App\Exports\MonthlyReportExport;
 use App\Exports\SummaryReportExport;
 use App\Exports\YearlyReportExport;
@@ -70,6 +71,64 @@ class ReportController extends Controller
         $year = (int) ($request->year ?? now()->year);
         [$monthlyData, $memberContributions, $expenseTrends, $totalIncome, $totalExpense] = $this->yearlyData($year);
         return view('admin.reports.print.yearly', compact('year', 'monthlyData', 'memberContributions', 'expenseTrends', 'totalIncome', 'totalExpense'));
+    }
+
+    // ─── Member‑wise Payment Report ──────────────────────────────────────────────
+
+    public function memberWise(Request $request)
+    {
+        $from          = $request->from;
+        $to            = $request->to;
+        $memberId      = $request->member_id;
+        $selectedMember = $memberId ? Member::with('user')->find($memberId) : null;
+
+        [$members, $grandTotal] = $this->memberWiseData($from, $to, $memberId ? (int) $memberId : null);
+
+        return view('admin.reports.member-wise', compact('from', 'to', 'members', 'grandTotal', 'selectedMember'));
+    }
+
+    public function printMemberWise(Request $request)
+    {
+        $from          = $request->from;
+        $to            = $request->to;
+        $memberId      = $request->member_id;
+        $selectedMember = $memberId ? Member::with('user')->find($memberId) : null;
+
+        [$members, $grandTotal] = $this->memberWiseData($from, $to, $memberId ? (int) $memberId : null);
+
+        return view('admin.reports.print.member-wise', compact('from', 'to', 'members', 'grandTotal', 'selectedMember'));
+    }
+
+    public function exportMemberWise(Request $request)
+    {
+        $from     = $request->from;
+        $to       = $request->to;
+        $format   = $request->format ?? 'excel';
+        $memberId = $request->member_id;
+
+        [$members, $grandTotal] = $this->memberWiseData($from, $to, $memberId ? (int) $memberId : null);
+
+        $selectedMember = $memberId ? Member::with('user')->find($memberId) : null;
+
+        $filename = 'SUMITY-MemberWise-Report';
+        if ($selectedMember) {
+            $filename .= '-' . str_replace(' ', '_', $selectedMember->user->name);
+        }
+        if ($from && $to) {
+            $filename .= '-' . $from . '_to_' . $to;
+        }
+
+        if ($format === 'pdf') {
+            $pdf = Pdf::loadView('admin.reports.pdf.member-wise', compact(
+                'from', 'to', 'members', 'grandTotal', 'selectedMember'
+            ))->setPaper('a4', 'landscape');
+            return $pdf->download($filename . '.pdf');
+        }
+
+        return Excel::download(
+            new MemberWiseReportExport($members, $grandTotal, $from, $to, $selectedMember),
+            $filename . '.xlsx'
+        );
     }
 
     // ─── Export methods ─────────────────────────────────────────────────────────
@@ -303,5 +362,30 @@ class ReportController extends Controller
         $totalExpense = collect($monthlyData)->sum('expense');
 
         return [$monthlyData, $memberContributions, $expenseTrends, $totalIncome, $totalExpense];
+    }
+
+    private function memberWiseData(?string $from, ?string $to, ?int $memberId = null): array
+    {
+        $query = Deposit::with('member.user')
+            ->where('status', 'approved')
+            ->when($from,     fn($q) => $q->whereDate('date', '>=', $from))
+            ->when($to,       fn($q) => $q->whereDate('date', '<=', $to))
+            ->when($memberId, fn($q) => $q->where('member_id', $memberId))
+            ->orderBy('date');
+
+        $deposits = $query->get();
+
+        $members = $deposits->groupBy('member_id')->map(function ($items) {
+            $member = $items->first()->member;
+            return (object) [
+                'member'   => $member,
+                'deposits' => $items,
+                'total'    => $items->sum('amount'),
+            ];
+        })->sortByDesc('total')->values();
+
+        $grandTotal = $deposits->sum('amount');
+
+        return [$members, $grandTotal];
     }
 }

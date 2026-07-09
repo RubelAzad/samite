@@ -38,9 +38,15 @@ class MemberController extends Controller
             'address'      => 'nullable|string',
             'join_date'    => 'required|date',
             'deposit_plan' => 'required|in:daily,monthly',
+            'photo'        => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
 
-        DB::transaction(function () use ($request) {
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('members', 'public');
+        }
+
+        DB::transaction(function () use ($request, $photoPath) {
             $user = User::create([
                 'name'     => $request->name,
                 'email'    => $request->email,
@@ -54,6 +60,7 @@ class MemberController extends Controller
                 'member_code'  => $this->generateMemberCode(),
                 'phone'        => $request->phone,
                 'address'      => $request->address,
+                'photo'        => $photoPath,
                 'join_date'    => $request->join_date,
                 'deposit_plan' => $request->deposit_plan,
                 'status'       => 'active',
@@ -89,11 +96,17 @@ class MemberController extends Controller
             'join_date'    => 'required|date',
             'deposit_plan' => 'required|in:daily,monthly',
             'status'       => 'required|in:active,inactive',
+            'photo'        => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
 
         $old = $member->toArray();
 
-        DB::transaction(function () use ($request, $member) {
+        $photoPath = $member->photo;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('members', 'public');
+        }
+
+        DB::transaction(function () use ($request, $member, $photoPath) {
             $member->user->update([
                 'name'   => $request->name,
                 'email'  => $request->email,
@@ -103,6 +116,7 @@ class MemberController extends Controller
             $member->update([
                 'phone'        => $request->phone,
                 'address'      => $request->address,
+                'photo'        => $photoPath,
                 'join_date'    => $request->join_date,
                 'deposit_plan' => $request->deposit_plan,
                 'status'       => $request->status,

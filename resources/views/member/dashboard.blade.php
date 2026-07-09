@@ -12,9 +12,14 @@
                 <h1 class="text-2xl font-bold">{{ auth()->user()->name }}</h1>
                 <p class="text-emerald-200 text-sm mt-1">{{ $member->member_code }} · Joined {{ $member->join_date->format('d M Y') }}</p>
             </div>
+            @if($member->photo_url)
+            <img src="{{ $member->photo_url }}" alt=""
+                 class="w-16 h-16 rounded-full object-cover border-2 border-white/40">
+            @else
             <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl font-bold">
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
             </div>
+            @endif
         </div>
     </div>
 

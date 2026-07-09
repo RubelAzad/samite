@@ -16,6 +16,17 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'  => \App\Http\Middleware\AdminMiddleware::class,
             'member' => \App\Http\Middleware\MemberMiddleware::class,
         ]);
+
+        $middleware->redirectTo(
+            users: function () {
+                if (!auth()->check()) {
+                    return route('login');
+                }
+                return auth()->user()->isAdmin()
+                    ? route('admin.dashboard')
+                    : route('member.dashboard');
+            },
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -13,7 +13,7 @@
     <div class="bg-white rounded-xl shadow-sm p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-6">Record New Deposit</h2>
 
-        <form method="POST" action="{{ route('admin.deposits.store') }}">
+        <form method="POST" action="{{ route('admin.deposits.store') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="space-y-4">
@@ -60,6 +60,16 @@
                     <textarea name="notes" rows="2"
                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                               placeholder="Optional notes...">{{ old('notes') }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Payment Receipt / Screenshot
+                        <span class="text-gray-400 font-normal text-xs ml-1">(optional)</span>
+                    </label>
+                    <input type="file" name="attachment" accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-medium hover:file:bg-emerald-100">
+                    @error('attachment')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
 

@@ -105,6 +105,11 @@
                 <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Yearly Report</span>
             </a>
 
+            <a href="{{ route('admin.reports.member-wise') }}" class="{{ $link(request()->routeIs('admin.reports.member-wise')) }}">
+                <i class="fas fa-users-gear text-base w-5 text-center flex-shrink-0"></i>
+                <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Member-Wise</span>
+            </a>
+
             {{-- Section: System --}}
             <div x-show="sidebarOpen" x-cloak class="px-4 mt-5 mb-1">
                 <span class="text-gray-500 text-xs font-semibold uppercase tracking-widest">System</span>

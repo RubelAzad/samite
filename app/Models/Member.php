@@ -10,9 +10,14 @@ class Member extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'member_code', 'phone', 'address',
+        'user_id', 'member_code', 'phone', 'address', 'photo',
         'join_date', 'deposit_plan', 'status',
     ];
+
+    public function getPhotoUrlAttribute(): ?string
+    {
+        return $this->photo ? asset('storage/' . $this->photo) : null;
+    }
 
     protected $casts = [
         'join_date' => 'date',

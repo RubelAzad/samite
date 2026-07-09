@@ -14,7 +14,9 @@ class AdminMiddleware
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthorized.'], 403);
             }
-            return redirect()->route('login')->with('error', 'Access denied. Admin only.');
+            return auth()->check()
+                ? redirect()->route('member.dashboard')->with('error', 'Access denied. Admin only.')
+                : redirect()->route('login');
         }
 
         return $next($request);

@@ -52,9 +52,14 @@
                 <tr class="hover:bg-gray-50 transition">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
+                            @if($member->photo_url)
+                            <img src="{{ $member->photo_url }}" alt=""
+                                 class="w-9 h-9 rounded-full object-cover">
+                            @else
                             <div class="w-9 h-9 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold text-sm">
                                 {{ strtoupper(substr($member->user->name, 0, 1)) }}
                             </div>
+                            @endif
                             <div>
                                 <p class="font-medium text-gray-800">{{ $member->user->name }}</p>
                                 <p class="text-xs text-gray-400">{{ $member->user->email }}</p>

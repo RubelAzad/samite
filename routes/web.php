@@ -5,7 +5,14 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\Member;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn() => redirect()->route('login'));
+Route::get('/', function () {
+    if (auth()->check()) {
+        return auth()->user()->isAdmin()
+            ? redirect()->route('admin.dashboard')
+            : redirect()->route('member.dashboard');
+    }
+    return redirect()->route('login');
+});
 
 // Auth
 Route::middleware('guest')->group(function () {
@@ -65,6 +72,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/reports/daily/print', [Admin\ReportController::class, 'printDaily'])->name('reports.daily.print');
     Route::get('/reports/monthly/print', [Admin\ReportController::class, 'printMonthly'])->name('reports.monthly.print');
     Route::get('/reports/yearly/print', [Admin\ReportController::class, 'printYearly'])->name('reports.yearly.print');
+
+    // Member‑wise Payment Report
+    Route::get('/reports/member-wise', [Admin\ReportController::class, 'memberWise'])->name('reports.member-wise');
+    Route::get('/reports/member-wise/export', [Admin\ReportController::class, 'exportMemberWise'])->name('reports.member-wise.export');
+    Route::get('/reports/member-wise/print', [Admin\ReportController::class, 'printMemberWise'])->name('reports.member-wise.print');
 
     // Audit Log
     Route::get('/audit-logs', [Admin\AuditLogController::class, 'index'])->name('audit.index');

@@ -14,7 +14,9 @@ class MemberMiddleware
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthorized.'], 403);
             }
-            return redirect()->route('login')->with('error', 'Access denied. Members only.');
+            return auth()->check()
+                ? redirect()->route('admin.dashboard')->with('error', 'Access denied. Members only.')
+                : redirect()->route('login');
         }
 
         if (auth()->user()->status === 'inactive') {

@@ -13,7 +13,7 @@
     <div class="bg-white rounded-xl shadow-sm p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-6">Edit Member – {{ $member->user->name }}</h2>
 
-        <form method="POST" action="{{ route('admin.members.update', $member) }}">
+        <form method="POST" action="{{ route('admin.members.update', $member) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -66,6 +66,21 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
                     <textarea name="address" rows="2"
                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">{{ old('address', $member->address) }}</textarea>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+                    <div class="flex items-center gap-4">
+                        @if($member->photo_url)
+                        <img src="{{ $member->photo_url }}" alt="Photo"
+                             class="w-16 h-16 rounded-full object-cover border">
+                        @endif
+                        <div class="flex-1">
+                            <input type="file" name="photo" accept="image/jpeg,image/png,image/gif,image/webp"
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-medium hover:file:bg-emerald-100">
+                        </div>
+                    </div>
+                    @error('photo')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
 

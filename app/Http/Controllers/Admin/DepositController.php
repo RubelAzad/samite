@@ -89,15 +89,22 @@ class DepositController extends Controller
             'date'           => 'required|date',
             'payment_method' => 'required|in:cash,bkash,nagad,bank',
             'notes'          => 'nullable|string|max:500',
+            'attachment'     => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,pdf|max:5120',
         ]);
 
-        DB::transaction(function () use ($request) {
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('deposits', 'public');
+        }
+
+        DB::transaction(function () use ($request, $attachmentPath) {
             $deposit = Deposit::create([
                 'member_id'      => $request->member_id,
                 'amount'         => $request->amount,
                 'date'           => $request->date,
                 'payment_method' => $request->payment_method,
                 'notes'          => $request->notes,
+                'attachment'     => $attachmentPath,
                 'status'         => 'approved',
                 'approved_by'    => auth()->id(),
                 'approved_at'    => now(),

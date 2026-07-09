@@ -13,9 +13,14 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Profile Card -->
         <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+            @if($member->photo_url)
+            <img src="{{ $member->photo_url }}" alt=""
+                 class="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-2 border-emerald-200">
+            @else
             <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold text-3xl mx-auto mb-4">
                 {{ strtoupper(substr($member->user->name, 0, 1)) }}
             </div>
+            @endif
             <h2 class="text-xl font-bold text-gray-800">{{ $member->user->name }}</h2>
             <p class="text-gray-500 text-sm mb-1">{{ $member->user->email }}</p>
             <p class="font-mono text-emerald-700 font-semibold mb-3">{{ $member->member_code }}</p>

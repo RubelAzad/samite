@@ -36,6 +36,7 @@
                     <th class="px-6 py-3 text-left font-semibold text-gray-600">Amount</th>
                     <th class="px-6 py-3 text-left font-semibold text-gray-600">Method</th>
                     <th class="px-6 py-3 text-left font-semibold text-gray-600">Notes</th>
+                    <th class="px-6 py-3 text-left font-semibold text-gray-600">Proof</th>
                     <th class="px-6 py-3 text-left font-semibold text-gray-600">Status</th>
                     <th class="px-6 py-3 text-left font-semibold text-gray-600">Remark</th>
                 </tr>
@@ -47,6 +48,26 @@
                     <td class="px-6 py-4 font-bold text-gray-800">৳{{ number_format($deposit->amount, 0) }}</td>
                     <td class="px-6 py-4 capitalize text-gray-600">{{ $deposit->payment_method }}</td>
                     <td class="px-6 py-4 text-gray-500 max-w-xs truncate">{{ $deposit->notes ?? '—' }}</td>
+                    <td class="px-6 py-4 text-center">
+                        @if($deposit->attachment)
+                            @php $ext = strtolower(pathinfo($deposit->attachment, PATHINFO_EXTENSION)); @endphp
+                            @if(in_array($ext, ['jpg','jpeg','png','gif','webp']))
+                            <a href="{{ asset('storage/' . $deposit->attachment) }}" target="_blank" title="View receipt">
+                                <span class="w-7 h-7 bg-emerald-100 rounded-full inline-flex items-center justify-center">
+                                    <i class="fas fa-image text-emerald-600 text-xs"></i>
+                                </span>
+                            </a>
+                            @else
+                            <a href="{{ asset('storage/' . $deposit->attachment) }}" target="_blank" title="Download receipt">
+                                <span class="w-7 h-7 bg-red-100 rounded-full inline-flex items-center justify-center">
+                                    <i class="fas fa-file-pdf text-red-600 text-xs"></i>
+                                </span>
+                            </a>
+                            @endif
+                        @else
+                        <span class="text-gray-300 text-xs">—</span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4">
                         <span class="text-xs px-2 py-1 rounded-full font-medium
                             {{ $deposit->status === 'approved' ? 'bg-green-100 text-green-700' : ($deposit->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
@@ -57,7 +78,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-gray-400">
+                    <td colspan="7" class="px-6 py-12 text-center text-gray-400">
                         <i class="fas fa-inbox text-3xl mb-2 block"></i>
                         No deposits found.
                         <a href="{{ route('member.deposits.create') }}" class="text-emerald-600 hover:underline ml-1">Submit your first →</a>
