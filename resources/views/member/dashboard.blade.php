@@ -81,6 +81,7 @@
             <h2 class="font-semibold text-gray-800">Recent Deposits</h2>
             <a href="{{ route('member.deposits.index') }}" class="text-sm text-emerald-600 hover:underline">View all</a>
         </div>
+        <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead class="bg-gray-50">
                 <tr>
@@ -112,6 +113,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 @endsection

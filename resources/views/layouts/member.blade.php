@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') – SUMITY Member</title>
+    <title>@yield('title', 'Dashboard') – ATTONIRVOR Member</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -16,11 +16,10 @@
     <nav class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-piggy-bank text-white"></i>
-                </div>
+                <img src="/image/logo.png" alt="ATTONIRVOR"
+                     class="w-9 h-9 rounded-lg object-cover">
                 <div>
-                    <p class="font-bold text-gray-800 leading-none">SUMITY</p>
+                    <p class="font-bold text-gray-800 leading-none">ATTONIRVOR</p>
                     <p class="text-xs text-gray-500">Member Portal</p>
                 </div>
             </div>
@@ -110,10 +109,11 @@
     </main>
 
     <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-400">
-        &copy; {{ date('Y') }} SUMITY – Group Savings Management
+        &copy; {{ date('Y') }} ATTONIRVOR – Group Savings Management
     </footer>
 </div>
 
 @stack('scripts')
+
 </body>
 </html>

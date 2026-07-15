@@ -30,7 +30,7 @@ class SummaryReportExport implements FromArray, WithTitle, ShouldAutoSize
         $rows = [];
 
         // ── Header ──
-        $rows[] = ['SUMITY – Full Summary Report (All Data)'];
+        $rows[] = ['ATTONIRVOR – Full Summary Report (All Data)'];
         $rows[] = ['Period: ' . reset($this->months) . ' to ' . end($this->months)];
         $rows[] = ['Generated: ' . now()->format('d M Y H:i')];
         $rows[] = [];

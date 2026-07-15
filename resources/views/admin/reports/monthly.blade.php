@@ -85,6 +85,7 @@
             <div class="px-6 py-4 border-b border-gray-100">
                 <h3 class="font-semibold text-gray-800">Member Contributions</h3>
             </div>
+            <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
                     <tr>
@@ -107,6 +108,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
 
         <!-- Expense Breakdown -->
@@ -114,6 +116,7 @@
             <div class="px-6 py-4 border-b border-gray-100">
                 <h3 class="font-semibold text-gray-800">Expense by Category</h3>
             </div>
+            <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
                     <tr>
@@ -132,6 +135,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </div>

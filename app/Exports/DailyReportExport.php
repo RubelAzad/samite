@@ -26,7 +26,7 @@ class DailyReportExport implements FromArray, WithTitle, ShouldAutoSize
     {
         $rows = [];
 
-        $rows[] = ['SUMITY – Daily Financial Report'];
+        $rows[] = ['ATTONIRVOR – Daily Financial Report'];
         $rows[] = ['Date: ' . \Carbon\Carbon::parse($this->date)->format('d M Y')];
         $rows[] = ['Generated: ' . now()->format('d M Y H:i')];
         $rows[] = [];

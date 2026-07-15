@@ -110,7 +110,7 @@ class ReportController extends Controller
 
         $selectedMember = $memberId ? Member::with('user')->find($memberId) : null;
 
-        $filename = 'SUMITY-MemberWise-Report';
+        $filename = 'ATTONIRVOR-MemberWise-Report';
         if ($selectedMember) {
             $filename .= '-' . str_replace(' ', '_', $selectedMember->user->name);
         }
@@ -139,7 +139,7 @@ class ReportController extends Controller
         $format = $request->format ?? 'excel';
         [$deposits, $expenses, $totalIncome, $totalExpense, $net] = $this->dailyData($date);
 
-        $filename = 'SUMITY-Daily-Report-' . $date;
+        $filename = 'ATTONIRVOR-Daily-Report-' . $date;
 
         if ($format === 'pdf') {
             $pdf = Pdf::loadView('admin.reports.pdf.daily', compact(
@@ -160,7 +160,7 @@ class ReportController extends Controller
         $format = $request->format ?? 'excel';
         [$memberDeposits, $expenseBreakdown, $totalIncome, $totalExpense, $net, $balance] = $this->monthlyData($month);
 
-        $filename = 'SUMITY-Monthly-Report-' . $month;
+        $filename = 'ATTONIRVOR-Monthly-Report-' . $month;
 
         if ($format === 'pdf') {
             $pdf = Pdf::loadView('admin.reports.pdf.monthly', compact(
@@ -182,7 +182,7 @@ class ReportController extends Controller
         $format = $request->format ?? 'excel';
         [$monthlyData, $memberContributions, $expenseTrends, $totalIncome, $totalExpense] = $this->yearlyData($year);
 
-        $filename = 'SUMITY-Yearly-Report-' . $year;
+        $filename = 'ATTONIRVOR-Yearly-Report-' . $year;
 
         if ($format === 'pdf') {
             $pdf = Pdf::loadView('admin.reports.pdf.yearly', compact(
@@ -215,7 +215,7 @@ class ReportController extends Controller
                 $data['monthlyTotals'], $data['expenseBreakdown'],
                 $data['totalIncome'], $data['totalExpense'], $data['balance']
             ),
-            'SUMITY-Full-Summary-Report.xlsx'
+            'ATTONIRVOR-Full-Summary-Report.xlsx'
         );
     }
 

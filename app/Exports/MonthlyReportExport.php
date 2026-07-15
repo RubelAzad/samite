@@ -31,7 +31,7 @@ class MonthlyReportExport implements FromArray, WithTitle, ShouldAutoSize
 
         $rows = [];
 
-        $rows[] = ['SUMITY – Monthly Financial Report'];
+        $rows[] = ['ATTONIRVOR – Monthly Financial Report'];
         $rows[] = ['Period: ' . $label];
         $rows[] = ['Generated: ' . now()->format('d M Y H:i')];
         $rows[] = [];

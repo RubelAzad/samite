@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         // ── Admin ────────────────────────────────────────────────────────────
         $admin = User::create([
             'name'     => 'Admin',
-            'email'    => 'admin@sumity.com',
+            'email'    => 'admin@ATTONIRVOR.com',
             'password' => Hash::make('password'),
             'role'     => 'admin',
             'status'   => 'active',
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         $membersData = [
             [
                 'name'  => 'মোঃ গোলাম মোরতোজা',
-                'email' => 'golam.mortoza@sumity.com',
+                'email' => 'golam.mortoza@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5000,
                     '2025-11-05' => 5000,
@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'পারভিন',
-                'email' => 'parvin@sumity.com',
+                'email' => 'parvin@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5000,
                     '2025-11-05' => 5000,
@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ সফিক উল্লাহ',
-                'email' => 'shafiq.ullah@sumity.com',
+                'email' => 'shafiq.ullah@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'সাহিদা আক্তার',
-                'email' => 'sahida.akter@sumity.com',
+                'email' => 'sahida.akter@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'সাবিয়া আক্তার',
-                'email' => 'sabia.akter@sumity.com',
+                'email' => 'sabia.akter@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -81,7 +81,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মালিয়া আক্তার',
-                'email' => 'malia.akter@sumity.com',
+                'email' => 'malia.akter@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -91,7 +91,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'বিলাল মৃধা',
-                'email' => 'bilal.mridha@sumity.com',
+                'email' => 'bilal.mridha@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -101,7 +101,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ মোস্তাফিজুর রহমান সিদ্দিকী',
-                'email' => 'mostafizur.siddiqui@sumity.com',
+                'email' => 'mostafizur.siddiqui@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -113,7 +113,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'কানিজ ফাতেমা',
-                'email' => 'kaniz.fatema@sumity.com',
+                'email' => 'kaniz.fatema@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -125,7 +125,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ আবুল কালাম আজাদ',
-                'email' => 'abul.kalam@sumity.com',
+                'email' => 'abul.kalam@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -140,7 +140,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ মাহফুজুর রহমান',
-                'email' => 'mahfuzur.rahman@sumity.com',
+                'email' => 'mahfuzur.rahman@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5000,
                     '2025-11-05' => 5000,
@@ -153,7 +153,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'রিপন আহমেদ',
-                'email' => 'ripon.ahmed@sumity.com',
+                'email' => 'ripon.ahmed@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-11-05' => 5000,
                     '2025-12-05' => 5000,
@@ -166,7 +166,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ রকিবুল আলম',
-                'email' => 'rakibul.alam@sumity.com',
+                'email' => 'rakibul.alam@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -177,7 +177,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ রবিন',
-                'email' => 'robin@sumity.com',
+                'email' => 'robin@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5000,
                     '2025-11-05' => 4000,
@@ -186,7 +186,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'লাকী আক্তার',
-                'email' => 'lucky.akter@sumity.com',
+                'email' => 'lucky.akter@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5000,
                     '2025-11-05' => 5000,
@@ -194,7 +194,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ শরিফুল ইসলাম (K)',
-                'email' => 'shariful.k@sumity.com',
+                'email' => 'shariful.k@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -209,7 +209,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোছা. মৌসুমী সরকার',
-                'email' => 'mousumi.sarkar@sumity.com',
+                'email' => 'mousumi.sarkar@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -220,7 +220,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'নাজমুল হুদা',
-                'email' => 'nazmul.sada@sumity.com',
+                'email' => 'nazmul.sada@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -232,7 +232,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'শরিফুজ্জামান',
-                'email' => 'sharifuzzaman@sumity.com',
+                'email' => 'sharifuzzaman@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -247,7 +247,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ কামরুল ইসলাম',
-                'email' => 'kamrul.islam@sumity.com',
+                'email' => 'kamrul.islam@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -258,7 +258,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'মোঃ শরিফুল ইসলাম (P)',
-                'email' => 'shariful.p@sumity.com',
+                'email' => 'shariful.p@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -273,7 +273,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'নুরুল ইসলাম',
-                'email' => 'nurul.islam@sumity.com',
+                'email' => 'nurul.islam@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -287,7 +287,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'জাহাঙ্গীর আলম',
-                'email' => 'jahangir.alam@sumity.com',
+                'email' => 'jahangir.alam@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,
@@ -302,7 +302,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'সজিব খান',
-                'email' => 'sajib.khan@sumity.com',
+                'email' => 'sajib.khan@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5000,
@@ -315,7 +315,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'আব্দুর রাজ্জাক',
-                'email' => 'abdur.razzak@sumity.com',
+                'email' => 'abdur.razzak@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5000,
                     '2025-11-05' => 5000,
@@ -324,7 +324,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name'  => 'নাসির উদ্দিন',
-                'email' => 'nasir.uddin@sumity.com',
+                'email' => 'nasir.uddin@ATTONIRVOR.com',
                 'deposits' => [
                     '2025-10-05' => 5100,
                     '2025-11-05' => 5100,

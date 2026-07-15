@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') – SUMITY Admin</title>
+    <title>@yield('title', 'Dashboard') – ATTONIRVOR Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -13,23 +13,27 @@
         body { font-family: 'Segoe UI', system-ui, sans-serif; }
     </style>
 </head>
-<body class="bg-gray-100" x-data="{ sidebarOpen: true }">
+<body class="bg-gray-100" x-data="{ sidebarOpen: false }">
 
 <div class="flex h-screen overflow-hidden">
 
+    {{-- Mobile backdrop --}}
+    <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
+         class="fixed inset-0 bg-black/50 z-30 lg:hidden"></div>
+
     {{-- ========== SIDEBAR ========== --}}
     <aside
-        class="flex flex-col flex-shrink-0 bg-gray-900 overflow-y-auto transition-all duration-300 z-40"
-        :class="sidebarOpen ? 'w-64' : 'w-0 lg:w-16'"
-        style="min-width:0;">
+        class="flex flex-col bg-gray-900 overflow-y-auto transition-all duration-300 z-40"
+        :class="sidebarOpen
+            ? 'fixed inset-y-0 left-0 w-64 shadow-2xl lg:shadow-none lg:static'
+            : 'hidden lg:flex lg:w-16'">
 
         {{-- Brand --}}
         <div class="flex items-center gap-3 px-4 py-5 border-b border-gray-700/60 flex-shrink-0">
-            <div class="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                <i class="fas fa-piggy-bank text-white text-base"></i>
-            </div>
+            <img src="/image/logo.png" alt="ATTONIRVOR"
+                 class="w-9 h-9 rounded-xl flex-shrink-0 shadow-lg object-cover">
             <div x-show="sidebarOpen" x-cloak class="overflow-hidden whitespace-nowrap">
-                <p class="text-white font-bold text-base leading-none">SUMITY</p>
+                <p class="text-white font-bold text-base leading-none">ATTONIRVOR</p>
                 <p class="text-emerald-400 text-xs mt-0.5">Admin Panel</p>
             </div>
         </div>
@@ -258,5 +262,6 @@
 </div>
 
 @stack('scripts')
+
 </body>
 </html>
