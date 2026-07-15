@@ -33,7 +33,7 @@
             <img src="/image/logo.png" alt="ATTONIRVOR"
                  class="w-9 h-9 rounded-xl flex-shrink-0 shadow-lg object-cover">
             <div x-show="sidebarOpen" x-cloak class="overflow-hidden whitespace-nowrap">
-                <p class="text-white font-bold text-base leading-none">ATTONIRVOR</p>
+                <p class="text-white font-bold text-base leading-none">{{ auth()->user()->company->name ?? 'ATTONIRVOR' }}</p>
                 <p class="text-emerald-400 text-xs mt-0.5">Admin Panel</p>
             </div>
         </div>
@@ -73,16 +73,21 @@
                 <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Deposits</span>
             </a>
 
+            @if(auth()->user()->company?->hasFeature('expenses') ?? true)
             <a href="{{ route('admin.expenses.index') }}" class="{{ $link(request()->routeIs('admin.expenses.*')) }}">
                 <i class="fas fa-receipt text-base w-5 text-center flex-shrink-0"></i>
                 <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Expenses</span>
             </a>
+            @endif
 
+            @if(auth()->user()->company?->hasFeature('ledger') ?? true)
             <a href="{{ route('admin.ledger.index') }}" class="{{ $link(request()->routeIs('admin.ledger.*')) }}">
                 <i class="fas fa-book-open text-base w-5 text-center flex-shrink-0"></i>
                 <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Ledger</span>
             </a>
+            @endif
 
+            @if(auth()->user()->company?->hasFeature('reports') ?? true)
             {{-- Section: Reports --}}
             <div x-show="sidebarOpen" x-cloak class="px-4 mt-5 mb-1">
                 <span class="text-gray-500 text-xs font-semibold uppercase tracking-widest">Reports</span>
@@ -113,6 +118,7 @@
                 <i class="fas fa-users-gear text-base w-5 text-center flex-shrink-0"></i>
                 <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Member-Wise</span>
             </a>
+            @endif
 
             {{-- Section: System --}}
             <div x-show="sidebarOpen" x-cloak class="px-4 mt-5 mb-1">
@@ -120,9 +126,16 @@
             </div>
             <div x-show="!sidebarOpen" class="my-3 mx-4 border-t border-gray-700/50"></div>
 
+            @if(auth()->user()->company?->hasFeature('audit_log') ?? true)
             <a href="{{ route('admin.audit.index') }}" class="{{ $link(request()->routeIs('admin.audit.*')) }}">
                 <i class="fas fa-shield-halved text-base w-5 text-center flex-shrink-0"></i>
                 <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Audit Log</span>
+            </a>
+            @endif
+
+            <a href="{{ route('admin.settings.edit') }}" class="{{ $link(request()->routeIs('admin.settings.*')) }}">
+                <i class="fas fa-gear text-base w-5 text-center flex-shrink-0"></i>
+                <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Settings</span>
             </a>
 
             <a href="{{ route('admin.password.edit') }}" class="{{ $link(request()->routeIs('admin.password.*')) }}">
@@ -250,6 +263,20 @@
                     <button @click="$el.closest('div').remove()" class="ml-auto text-red-400 hover:text-red-600">
                         <i class="fas fa-xmark"></i>
                     </button>
+                </div>
+            @endif
+
+            @php $company = auth()->user()->company; @endphp
+            @if($company?->isSubscriptionExpiringSoon())
+                <div class="flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl text-sm">
+                    <i class="fas fa-triangle-exclamation text-amber-500 flex-shrink-0"></i>
+                    <span>Your subscription expires on {{ $company->subscription_ends_at->format('d M Y') }}. Contact support to renew.</span>
+                </div>
+            @endif
+            @if($company?->memberLimitReached())
+                <div class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm">
+                    <i class="fas fa-users text-red-500 flex-shrink-0"></i>
+                    <span>You've reached your plan's member limit ({{ $company->subscriptionPackage->member_limit }}). New members are blocked until you upgrade your package.</span>
                 </div>
             @endif
         </div>

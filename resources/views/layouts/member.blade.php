@@ -19,7 +19,7 @@
                 <img src="/image/logo.png" alt="ATTONIRVOR"
                      class="w-9 h-9 rounded-lg object-cover">
                 <div>
-                    <p class="font-bold text-gray-800 leading-none">ATTONIRVOR</p>
+                    <p class="font-bold text-gray-800 leading-none">{{ auth()->user()->company->name ?? 'ATTONIRVOR' }}</p>
                     <p class="text-xs text-gray-500">Member Portal</p>
                 </div>
             </div>

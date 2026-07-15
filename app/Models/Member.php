@@ -2,21 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\BelongsToCompany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Member extends Model
 {
-    use HasFactory;
+    use BelongsToCompany, HasFactory;
 
     protected $fillable = [
         'user_id', 'member_code', 'phone', 'address', 'photo',
-        'join_date', 'deposit_plan', 'status',
+        'join_date', 'deposit_plan', 'status', 'company_id',
     ];
 
     public function getPhotoUrlAttribute(): ?string
     {
-        return $this->photo ? asset('storage/' . $this->photo) : null;
+        return $this->photo ? asset('storage/'.$this->photo) : null;
     }
 
     protected $casts = [

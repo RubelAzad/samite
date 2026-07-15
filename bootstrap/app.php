@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\MemberMiddleware;
+use App\Http\Middleware\RequireCompanyFeature;
+use App\Http\Middleware\SuperAdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,15 +17,21 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin'  => \App\Http\Middleware\AdminMiddleware::class,
-            'member' => \App\Http\Middleware\MemberMiddleware::class,
+            'admin' => AdminMiddleware::class,
+            'member' => MemberMiddleware::class,
+            'superadmin' => SuperAdminMiddleware::class,
+            'feature' => RequireCompanyFeature::class,
         ]);
 
         $middleware->redirectTo(
             users: function () {
-                if (!auth()->check()) {
+                if (! auth()->check()) {
                     return route('login');
                 }
+                if (auth()->user()->isSuperAdmin()) {
+                    return route('super-admin.dashboard');
+                }
+
                 return auth()->user()->isAdmin()
                     ? route('admin.dashboard')
                     : route('member.dashboard');

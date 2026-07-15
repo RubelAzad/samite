@@ -10,10 +10,17 @@
             <h2 class="text-2xl font-bold text-gray-800">Members</h2>
             <p class="text-gray-500 text-sm">Manage all group members</p>
         </div>
-        <a href="{{ route('admin.members.create') }}"
-           class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium transition text-sm">
-            <i class="fas fa-user-plus"></i> Add Member
-        </a>
+        @if(auth()->user()->company?->memberLimitReached())
+            <span class="inline-flex items-center gap-2 bg-gray-100 text-gray-400 px-5 py-2.5 rounded-lg font-medium text-sm cursor-not-allowed"
+                  title="Member limit reached — upgrade your package to add more members">
+                <i class="fas fa-user-plus"></i> Add Member
+            </span>
+        @else
+            <a href="{{ route('admin.members.create') }}"
+               class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium transition text-sm">
+                <i class="fas fa-user-plus"></i> Add Member
+            </a>
+        @endif
     </div>
 
     <!-- Filters -->

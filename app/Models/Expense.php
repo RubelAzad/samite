@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\BelongsToCompany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
-    use HasFactory;
+    use BelongsToCompany, HasFactory;
 
     protected $fillable = [
         'title', 'category', 'amount', 'date',
-        'description', 'attachment', 'status', 'created_by',
+        'description', 'attachment', 'status', 'created_by', 'company_id',
     ];
 
     protected $casts = [
@@ -27,9 +28,9 @@ class Expense extends Model
     public static function categories(): array
     {
         return [
-            'meeting'       => 'Meeting',
-            'travel'        => 'Travel / Visit',
-            'office'        => 'Office Cost',
+            'meeting' => 'Meeting',
+            'travel' => 'Travel / Visit',
+            'office' => 'Office Cost',
             'communication' => 'Communication',
             'miscellaneous' => 'Miscellaneous',
         ];

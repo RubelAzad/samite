@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\BelongsToCompany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Deposit extends Model
 {
-    use HasFactory;
+    use BelongsToCompany, HasFactory;
 
     protected $fillable = [
         'member_id', 'amount', 'date', 'payment_method',
-        'status', 'notes', 'attachment', 'rejection_reason', 'approved_by', 'approved_at',
+        'status', 'notes', 'attachment', 'rejection_reason', 'approved_by', 'approved_at', 'company_id',
     ];
 
     protected $casts = [

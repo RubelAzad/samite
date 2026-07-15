@@ -14,17 +14,18 @@ class AuthController extends Controller
         if (Auth::check()) {
             return $this->redirectByRole();
         }
+
         return view('auth.login');
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'login'    => 'required|string',
+            'login' => 'required|string',
             'password' => 'required',
         ]);
 
-        $login    = trim($request->login);
+        $login = trim($request->login);
         $password = $request->password;
 
         // Resolve email from login identifier
@@ -57,7 +58,14 @@ class AuthController extends Controller
 
             if ($user->status === 'inactive') {
                 Auth::logout();
+
                 return back()->withErrors(['login' => 'Your account is inactive. Contact the administrator.']);
+            }
+
+            if ($user->company && ! $user->company->isActive()) {
+                Auth::logout();
+
+                return back()->withErrors(['login' => 'Your company account is inactive. Contact support.']);
             }
 
             AuditLog::record('login', 'user', $user->id, null, null, "User {$user->name} logged in");
@@ -72,7 +80,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        AuditLog::record('logout', 'user', auth()->id(), null, null, "User " . auth()->user()->name . " logged out");
+        AuditLog::record('logout', 'user', auth()->id(), null, null, 'User '.auth()->user()->name.' logged out');
 
         Auth::logout();
         $request->session()->invalidate();
@@ -83,7 +91,13 @@ class AuthController extends Controller
 
     private function redirectByRole()
     {
-        return Auth::user()->isAdmin()
+        $user = Auth::user();
+
+        if ($user->isSuperAdmin()) {
+            return redirect()->route('super-admin.dashboard');
+        }
+
+        return $user->isAdmin()
             ? redirect()->route('admin.dashboard')
             : redirect()->route('member.dashboard');
     }

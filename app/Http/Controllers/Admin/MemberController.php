@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Member;
 use App\Models\User;
+use App\Support\ImageCompressor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -15,8 +16,8 @@ class MemberController extends Controller
     public function index(Request $request)
     {
         $query = Member::with('user')
-            ->when($request->search, fn($q) => $q->whereHas('user', fn($u) => $u->where('name', 'like', "%{$request->search}%")))
-            ->when($request->status, fn($q) => $q->where('status', $request->status));
+            ->when($request->search, fn ($q) => $q->whereHas('user', fn ($u) => $u->where('name', 'like', "%{$request->search}%")))
+            ->when($request->status, fn ($q) => $q->where('status', $request->status));
 
         $members = $query->latest()->paginate(15)->withQueryString();
 
@@ -25,45 +26,62 @@ class MemberController extends Controller
 
     public function create()
     {
+        $company = auth()->user()->company;
+
+        if ($company && $company->memberLimitReached()) {
+            return redirect()->route('admin.members.index')->with(
+                'error',
+                "You've reached your plan's member limit ({$company->subscriptionPackage->member_limit}). Please upgrade your package to add more members."
+            );
+        }
+
         return view('admin.members.create');
     }
 
     public function store(Request $request)
     {
+        $company = auth()->user()->company;
+
+        if ($company && $company->memberLimitReached()) {
+            return back()->withErrors([
+                'limit' => "You've reached your plan's member limit ({$company->subscriptionPackage->member_limit}). Please upgrade your package to add more members.",
+            ])->withInput();
+        }
+
         $request->validate([
-            'name'         => 'required|string|max:255',
-            'email'        => 'required|email|unique:users,email',
-            'password'     => 'required|min:8|confirmed',
-            'phone'        => 'nullable|string|max:20',
-            'address'      => 'nullable|string',
-            'join_date'    => 'required|date',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|confirmed',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'join_date' => 'required|date',
             'deposit_plan' => 'required|in:daily,monthly',
-            'photo'        => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:8192',
         ]);
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('members', 'public');
+            $photoPath = ImageCompressor::store($request->file('photo'), 'members', 100);
         }
 
         DB::transaction(function () use ($request, $photoPath) {
             $user = User::create([
-                'name'     => $request->name,
-                'email'    => $request->email,
+                'name' => $request->name,
+                'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role'     => 'member',
-                'status'   => 'active',
+                'role' => 'member',
+                'status' => 'active',
             ]);
 
             $member = Member::create([
-                'user_id'      => $user->id,
-                'member_code'  => $this->generateMemberCode(),
-                'phone'        => $request->phone,
-                'address'      => $request->address,
-                'photo'        => $photoPath,
-                'join_date'    => $request->join_date,
+                'user_id' => $user->id,
+                'member_code' => $this->generateMemberCode(),
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'photo' => $photoPath,
+                'join_date' => $request->join_date,
                 'deposit_plan' => $request->deposit_plan,
-                'status'       => 'active',
+                'status' => 'active',
             ]);
 
             AuditLog::record('create', 'member', $member->id, null, $member->toArray(), "Created member {$user->name}");
@@ -75,12 +93,14 @@ class MemberController extends Controller
     public function show(Member $member)
     {
         $member->load('user', 'deposits', 'ledgerEntries');
+
         return view('admin.members.show', compact('member'));
     }
 
     public function edit(Member $member)
     {
         $member->load('user');
+
         return view('admin.members.edit', compact('member'));
     }
 
@@ -89,37 +109,37 @@ class MemberController extends Controller
         $member->load('user');
 
         $request->validate([
-            'name'         => 'required|string|max:255',
-            'email'        => 'required|email|unique:users,email,' . $member->user_id,
-            'phone'        => 'nullable|string|max:20',
-            'address'      => 'nullable|string',
-            'join_date'    => 'required|date',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$member->user_id,
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'join_date' => 'required|date',
             'deposit_plan' => 'required|in:daily,monthly',
-            'status'       => 'required|in:active,inactive',
-            'photo'        => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'status' => 'required|in:active,inactive',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:8192',
         ]);
 
         $old = $member->toArray();
 
         $photoPath = $member->photo;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('members', 'public');
+            $photoPath = ImageCompressor::store($request->file('photo'), 'members', 100);
         }
 
         DB::transaction(function () use ($request, $member, $photoPath) {
             $member->user->update([
-                'name'   => $request->name,
-                'email'  => $request->email,
+                'name' => $request->name,
+                'email' => $request->email,
                 'status' => $request->status,
             ]);
 
             $member->update([
-                'phone'        => $request->phone,
-                'address'      => $request->address,
-                'photo'        => $photoPath,
-                'join_date'    => $request->join_date,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'photo' => $photoPath,
+                'join_date' => $request->join_date,
                 'deposit_plan' => $request->deposit_plan,
-                'status'       => $request->status,
+                'status' => $request->status,
             ]);
         });
 
@@ -143,6 +163,7 @@ class MemberController extends Controller
     {
         $last = Member::latest('id')->first();
         $next = $last ? ($last->id + 1) : 1;
-        return 'SMT-' . str_pad($next, 4, '0', STR_PAD_LEFT);
+
+        return 'SMT-'.str_pad($next, 4, '0', STR_PAD_LEFT);
     }
 }

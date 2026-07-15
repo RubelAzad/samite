@@ -13,6 +13,13 @@
     <div class="bg-white rounded-xl shadow-sm p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-6">Create New Member</h2>
 
+        @error('limit')
+            <div class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm mb-6">
+                <i class="fas fa-circle-exclamation text-red-500 flex-shrink-0"></i>
+                <span>{{ $message }}</span>
+            </div>
+        @enderror
+
         <form method="POST" action="{{ route('admin.members.store') }}" enctype="multipart/form-data">
             @csrf
 

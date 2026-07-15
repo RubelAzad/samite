@@ -71,32 +71,43 @@
         <div class="bg-white rounded-xl shadow-sm p-6">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
             <div class="space-y-3">
+                @if(auth()->user()->company?->memberLimitReached())
+                <span class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-gray-400 text-sm font-medium cursor-not-allowed"
+                      title="Member limit reached — upgrade your package to add more members">
+                    <i class="fas fa-user-plus w-5"></i> Add New Member
+                </span>
+                @else
                 <a href="{{ route('admin.members.create') }}"
                    class="flex items-center gap-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition text-blue-700 text-sm font-medium">
                     <i class="fas fa-user-plus w-5"></i> Add New Member
                 </a>
+                @endif
                 <a href="{{ route('admin.deposits.create') }}"
                    class="flex items-center gap-3 p-3 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition text-emerald-700 text-sm font-medium">
                     <i class="fas fa-plus-circle w-5"></i> Record Deposit
                 </a>
+                @if(auth()->user()->company?->hasFeature('expenses') ?? true)
                 <a href="{{ route('admin.expenses.create') }}"
                    class="flex items-center gap-3 p-3 bg-red-50 hover:bg-red-100 rounded-lg transition text-red-700 text-sm font-medium">
                     <i class="fas fa-minus-circle w-5"></i> Add Expense
                 </a>
+                @endif
                 <a href="{{ route('admin.deposits.index', ['status' => 'pending']) }}"
                    class="flex items-center gap-3 p-3 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition text-yellow-700 text-sm font-medium">
                     <i class="fas fa-check-circle w-5"></i> Review Pending ({{ $pendingDeposits }})
                 </a>
+                @if(auth()->user()->company?->hasFeature('reports') ?? true)
                 <a href="{{ route('admin.reports.monthly') }}"
                    class="flex items-center gap-3 p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition text-purple-700 text-sm font-medium">
                     <i class="fas fa-chart-bar w-5"></i> Monthly Report
                 </a>
+                @endif
             </div>
         </div>
     </div>
 
     <!-- Recent Activity -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 {{ auth()->user()->company?->hasFeature('expenses') ?? true ? 'lg:grid-cols-2' : '' }} gap-6">
         <!-- Recent Deposits -->
         <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-4">
@@ -138,6 +149,7 @@
             </table>
         </div>
 
+        @if(auth()->user()->company?->hasFeature('expenses') ?? true)
         <!-- Recent Expenses -->
         <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-4">
@@ -168,6 +180,7 @@
             </table>
             </div>
         </div>
+        @endif
     </div>
 </div>
 @endsection
