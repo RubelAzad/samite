@@ -5,9 +5,6 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\Member;
 use Illuminate\Support\Facades\Route;
 
-// Offline fallback page
-Route::get('/offline', fn() => view('pwa.offline'));
-
 Route::get('/', function () {
     if (auth()->check()) {
         return auth()->user()->isAdmin()

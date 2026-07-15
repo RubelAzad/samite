@@ -7,11 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#059669">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="ATTONIRVOR">
-    <link rel="apple-touch-icon" href="/image/logo.png">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         [x-cloak] { display: none !important; }
@@ -266,54 +261,7 @@
     </div>
 </div>
 
-<div id="pwa-install" class="fixed bottom-6 right-6 z-50">
-    <div class="flex items-center gap-3 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-medium cursor-pointer hover:bg-emerald-700 transition-all" id="pwa-btn">
-        <i class="fas fa-spinner fa-spin"></i> Checking...
-    </div>
-</div>
-
 @stack('scripts')
 
-<script>
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(e => console.warn('SW registration failed:', e));
-}
-
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    setInstallBtn('Install App', () => {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.finally(() => { deferredPrompt = null; hideInstallBtn(); });
-    });
-});
-
-function setInstallBtn(text, handler) {
-    const el = document.getElementById('pwa-btn');
-    el.innerHTML = '<i class="fas fa-download"></i> ' + text;
-    el.onclick = handler;
-}
-function hideInstallBtn() { document.getElementById('pwa-install').classList.add('hidden'); }
-
-// Already installed (standalone) → hide
-if (window.matchMedia('(display-mode: standalone)').matches) { hideInstallBtn(); }
-else if (window.isSecureContext && 'serviceWorker' in navigator) {
-    setInstallBtn('Install App', () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.finally(() => { deferredPrompt = null; hideInstallBtn(); });
-        } else {
-            alert('PWA is loading. Please wait a moment and try again.');
-        }
-    });
-} else if (!window.isSecureContext) {
-    setInstallBtn('HTTPS Required', () => {
-        alert('PWA requires HTTPS. Use https://samite.test or http://127.0.0.1:8000 (via php artisan serve).');
-    });
-} else {
-    hideInstallBtn();
-}
-</script>
 </body>
 </html>
