@@ -36,7 +36,7 @@
                     </button>
                 </div>
                 <div class="p-6 space-y-4">
-                    <p class="text-sm text-gray-600">This report contains <strong>all data</strong> — all members, all months, all deposits and expenses from the beginning.</p>
+                    <p class="text-sm text-gray-600">This report contains <strong>all data</strong> — all members, all months, all deposits, withdrawals and expenses from the beginning.</p>
                     <div class="grid grid-cols-2 gap-3">
                         <a href="{{ route('admin.reports.summary.export') }}"
                            class="flex flex-col items-center gap-2 bg-green-50 hover:bg-green-100 border border-green-200 text-green-800 py-4 rounded-xl transition text-sm font-semibold">
@@ -49,7 +49,7 @@
                            class="flex flex-col items-center gap-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-800 py-4 rounded-xl transition text-sm font-semibold">
                             <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
                             Download PDF
-                            <span class="text-xs font-normal text-red-600">print &amp; save</span>
+                            <span class="text-xs font-normal text-red-600">print & save</span>
                         </a>
                     </div>
                     <p class="text-xs text-gray-400 text-center">PDF opens a print-ready page — select "Save as PDF" in the print dialog.</p>
@@ -59,19 +59,23 @@
     </div>
 
     {{-- Summary Cards --}}
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500">
             <p class="text-xs text-gray-500">Total Collected</p>
             <p class="text-xl font-bold text-emerald-700">৳{{ number_format($totalIncome, 0) }}</p>
             <p class="text-xs text-gray-400 mt-0.5">{{ count($months) }} months</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500">
+            <p class="text-xs text-gray-500">Total Withdrawals</p>
+            <p class="text-xl font-bold text-red-600">৳{{ number_format($totalWithdrawals, 0) }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500">
             <p class="text-xs text-gray-500">Total Expenses</p>
-            <p class="text-xl font-bold text-red-600">৳{{ number_format($totalExpense, 0) }}</p>
+            <p class="text-xl font-bold text-orange-600">৳{{ number_format($totalExpense, 0) }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500">
             <p class="text-xs text-gray-500">Net Savings</p>
-            <p class="text-xl font-bold text-blue-700">৳{{ number_format($totalIncome - $totalExpense, 0) }}</p>
+            <p class="text-xl font-bold text-blue-700">৳{{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 0) }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500">
             <p class="text-xs text-gray-500">Fund Balance</p>
@@ -90,6 +94,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">Month</th>
                         <th class="px-6 py-3 text-right font-semibold text-gray-600">Income (৳)</th>
+                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Withdrawals (৳)</th>
                         <th class="px-6 py-3 text-right font-semibold text-gray-600">Expense (৳)</th>
                         <th class="px-6 py-3 text-right font-semibold text-gray-600">Net (৳)</th>
                     </tr>
@@ -98,12 +103,14 @@
                     @foreach($months as $label)
                     @php
                         $inc = $monthlyTotals[$label]['income']  ?? 0;
+                        $wdr = $monthlyTotals[$label]['withdrawals']  ?? 0;
                         $exp = $monthlyTotals[$label]['expense'] ?? 0;
-                        $net = $inc - $exp;
+                        $net = $inc - $wdr - $exp;
                     @endphp
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-3 font-medium text-gray-700">{{ $label }}</td>
                         <td class="px-6 py-3 text-right font-semibold text-emerald-700">{{ $inc > 0 ? number_format($inc, 0) : '—' }}</td>
+                        <td class="px-6 py-3 text-right font-semibold text-red-600">{{ $wdr > 0 ? number_format($wdr, 0) : '—' }}</td>
                         <td class="px-6 py-3 text-right font-semibold text-red-600">{{ $exp > 0 ? number_format($exp, 0) : '—' }}</td>
                         <td class="px-6 py-3 text-right font-bold {{ $net >= 0 ? 'text-blue-700' : 'text-red-700' }}">
                             {{ $net != 0 ? number_format($net, 0) : '—' }}
@@ -115,15 +122,16 @@
                     <tr>
                         <td class="px-6 py-3 font-bold text-gray-800">Grand Total</td>
                         <td class="px-6 py-3 text-right font-bold text-emerald-700">{{ number_format($totalIncome, 0) }}</td>
+                        <td class="px-6 py-3 text-right font-bold text-red-600">{{ number_format($totalWithdrawals, 0) }}</td>
                         <td class="px-6 py-3 text-right font-bold text-red-600">{{ number_format($totalExpense, 0) }}</td>
-                        <td class="px-6 py-3 text-right font-bold text-blue-700">{{ number_format($totalIncome - $totalExpense, 0) }}</td>
+                        <td class="px-6 py-3 text-right font-bold text-blue-700">{{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 0) }}</td>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
 
-    {{-- Member × Month Matrix --}}
+    {{-- Member × Month Matrix (Deposits) --}}
     <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
         <div class="px-6 py-4 border-b border-gray-100">
             <h3 class="font-semibold text-gray-800">Member Deposit Matrix</h3>
@@ -174,6 +182,64 @@
                         @endforeach
                         <td class="px-4 py-3 text-right font-bold text-emerald-800 bg-emerald-100">
                             {{ number_format($totalIncome, 0) }}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    {{-- Member × Month Matrix (Withdrawals) --}}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800">Member Withdrawal Matrix</h3>
+            <p class="text-xs text-gray-400 mt-0.5">Month-wise withdrawal amounts per member (BDT)</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm" style="min-width:{{ 200 + count($months) * 90 }}px;">
+                <thead class="bg-red-800 text-white">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-semibold sticky left-0 bg-red-800 z-10">Member</th>
+                        <th class="px-3 py-3 text-center font-semibold text-xs" style="min-width:60px;">Code</th>
+                        @foreach($months as $label)
+                        <th class="px-3 py-3 text-right font-semibold text-xs whitespace-nowrap" style="min-width:80px;">{{ $label }}</th>
+                        @endforeach
+                        <th class="px-4 py-3 text-right font-semibold bg-red-700" style="min-width:90px;">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($members as $m)
+                    @php
+                        $memberTotal = collect($months)->sum(fn($label) => $withdrawalMatrix[$m->id][$label] ?? 0);
+                    @endphp
+                    <tr class="hover:bg-red-50/50 {{ $memberTotal == 0 ? 'opacity-50' : '' }}">
+                        <td class="px-4 py-2.5 font-medium text-gray-800 sticky left-0 bg-white hover:bg-red-50/50">
+                            {{ $m->user->name }}
+                        </td>
+                        <td class="px-3 py-2.5 text-center text-xs text-gray-400 font-mono">{{ $m->member_code }}</td>
+                        @foreach($months as $label)
+                        @php $amt = $withdrawalMatrix[$m->id][$label] ?? 0; @endphp
+                        <td class="px-3 py-2.5 text-right text-xs {{ $amt > 0 ? 'font-semibold text-red-700 bg-red-50/40' : 'text-gray-300' }}">
+                            {{ $amt > 0 ? number_format($amt, 0) : '—' }}
+                        </td>
+                        @endforeach
+                        <td class="px-4 py-2.5 text-right font-bold text-gray-900 bg-gray-50">
+                            {{ $memberTotal > 0 ? number_format($memberTotal, 0) : '—' }}
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot class="border-t-2 border-red-400 bg-red-50">
+                    <tr>
+                        <td class="px-4 py-3 font-bold text-red-800 sticky left-0 bg-red-50">Monthly Total</td>
+                        <td class="px-3 py-3"></td>
+                        @foreach($months as $label)
+                        <td class="px-3 py-3 text-right font-bold text-red-800 text-xs">
+                            {{ number_format($monthlyTotals[$label]['withdrawals'] ?? 0, 0) }}
+                        </td>
+                        @endforeach
+                        <td class="px-4 py-3 text-right font-bold text-red-800 bg-red-100">
+                            {{ number_format($totalWithdrawals, 0) }}
                         </td>
                     </tr>
                 </tfoot>

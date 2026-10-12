@@ -28,6 +28,16 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm p-5 flex items-center gap-4 col-span-1">
+            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-money-bill-wave text-orange-600 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Total Withdrawals</p>
+                <p class="text-2xl font-bold text-gray-800">৳{{ number_format($totalWithdrawals, 0) }}</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-5 flex items-center gap-4 col-span-1">
             <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
                 <i class="fas fa-receipt text-red-600 text-xl"></i>
             </div>

@@ -17,10 +17,16 @@
                 <h2 class="text-xl font-bold text-gray-800">Deposit #{{ $deposit->id }}</h2>
                 <p class="text-sm text-gray-400 mt-0.5">{{ $deposit->member->user->name ?? '' }} · {{ $deposit->member->member_code ?? '' }}</p>
             </div>
-            <span class="text-sm px-3 py-1.5 rounded-full font-semibold
-                {{ $deposit->status === 'approved' ? 'bg-green-100 text-green-700' : ($deposit->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
-                {{ ucfirst($deposit->status) }}
-            </span>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('admin.deposits.receipt', $deposit) }}" target="_blank"
+                   class="inline-flex items-center gap-1.5 bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-emerald-700 transition no-print">
+                    <i class="fas fa-receipt"></i> Receipt
+                </a>
+                <span class="text-sm px-3 py-1.5 rounded-full font-semibold
+                    {{ $deposit->status === 'approved' ? 'bg-green-100 text-green-700' : ($deposit->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
+                    {{ ucfirst($deposit->status) }}
+                </span>
+            </div>
         </div>
 
         {{-- Details --}}

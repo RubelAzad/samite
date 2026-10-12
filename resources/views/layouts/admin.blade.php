@@ -73,9 +73,19 @@
                 <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Deposits</span>
             </a>
 
+            <a href="{{ route('admin.withdrawals.index') }}" class="{{ $link(request()->routeIs('admin.withdrawals.*')) }}">
+                <i class="fas fa-hand-holding-usd text-base w-5 text-center flex-shrink-0"></i>
+                <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Withdrawals</span>
+            </a>
+
             <a href="{{ route('admin.expenses.index') }}" class="{{ $link(request()->routeIs('admin.expenses.*')) }}">
                 <i class="fas fa-receipt text-base w-5 text-center flex-shrink-0"></i>
                 <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Expenses</span>
+            </a>
+
+            <a href="{{ route('admin.bank-accounts.index') }}" class="{{ $link(request()->routeIs('admin.bank-accounts.*')) }}">
+                <i class="fas fa-university text-base w-5 text-center flex-shrink-0"></i>
+                <span x-show="sidebarOpen" x-cloak class="whitespace-nowrap">Bank Accounts</span>
             </a>
 
             <a href="{{ route('admin.ledger.index') }}" class="{{ $link(request()->routeIs('admin.ledger.*')) }}">

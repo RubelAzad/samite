@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Member;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +11,7 @@ Route::get('/', function () {
             ? redirect()->route('admin.dashboard')
             : redirect()->route('member.dashboard');
     }
+
     return redirect()->route('login');
 });
 
@@ -40,8 +41,29 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/deposits/create', [Admin\DepositController::class, 'create'])->name('deposits.create');
     Route::post('/deposits', [Admin\DepositController::class, 'store'])->name('deposits.store');
     Route::get('/deposits/{deposit}', [Admin\DepositController::class, 'show'])->name('deposits.show');
+    Route::get('/deposits/{deposit}/receipt', [Admin\DepositController::class, 'receipt'])->name('deposits.receipt');
+    Route::get('/deposits/{deposit}/edit', [Admin\DepositController::class, 'edit'])->name('deposits.edit');
+    Route::put('/deposits/{deposit}', [Admin\DepositController::class, 'update'])->name('deposits.update');
+    Route::delete('/deposits/{deposit}', [Admin\DepositController::class, 'destroy'])->name('deposits.destroy');
     Route::post('/deposits/{deposit}/approve', [Admin\DepositController::class, 'approve'])->name('deposits.approve');
     Route::post('/deposits/{deposit}/reject', [Admin\DepositController::class, 'reject'])->name('deposits.reject');
+
+    // Withdrawals
+    Route::get('/withdrawals', [Admin\WithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::get('/withdrawals/create', [Admin\WithdrawalController::class, 'create'])->name('withdrawals.create');
+    Route::post('/withdrawals', [Admin\WithdrawalController::class, 'store'])->name('withdrawals.store');
+    Route::get('/withdrawals/{withdrawal}', [Admin\WithdrawalController::class, 'show'])->name('withdrawals.show');
+    Route::post('/withdrawals/{withdrawal}/approve', [Admin\WithdrawalController::class, 'approve'])->name('withdrawals.approve');
+    Route::post('/withdrawals/{withdrawal}/reject', [Admin\WithdrawalController::class, 'reject'])->name('withdrawals.reject');
+
+    // Bank Accounts
+    Route::get('/bank-accounts', [Admin\BankAccountController::class, 'index'])->name('bank-accounts.index');
+    Route::get('/bank-accounts/create', [Admin\BankAccountController::class, 'create'])->name('bank-accounts.create');
+    Route::post('/bank-accounts', [Admin\BankAccountController::class, 'store'])->name('bank-accounts.store');
+    Route::get('/bank-accounts/{bankAccount}', [Admin\BankAccountController::class, 'show'])->name('bank-accounts.show');
+    Route::get('/bank-accounts/{bankAccount}/edit', [Admin\BankAccountController::class, 'edit'])->name('bank-accounts.edit');
+    Route::put('/bank-accounts/{bankAccount}', [Admin\BankAccountController::class, 'update'])->name('bank-accounts.update');
+    Route::delete('/bank-accounts/{bankAccount}', [Admin\BankAccountController::class, 'destroy'])->name('bank-accounts.destroy');
 
     // Expenses
     Route::get('/expenses', [Admin\ExpenseController::class, 'index'])->name('expenses.index');
@@ -97,6 +119,8 @@ Route::prefix('member')->name('member.')->middleware(['auth', 'member'])->group(
     Route::get('/deposits', [Member\DepositController::class, 'index'])->name('deposits.index');
     Route::get('/deposits/create', [Member\DepositController::class, 'create'])->name('deposits.create');
     Route::post('/deposits', [Member\DepositController::class, 'store'])->name('deposits.store');
+
+    Route::get('/withdrawals', [Member\WithdrawalController::class, 'index'])->name('withdrawals.index');
 
     Route::get('/ledger', [Member\LedgerController::class, 'index'])->name('ledger.index');
 

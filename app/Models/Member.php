@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Member extends Model
 {
@@ -16,7 +16,7 @@ class Member extends Model
 
     public function getPhotoUrlAttribute(): ?string
     {
-        return $this->photo ? asset('storage/' . $this->photo) : null;
+        return $this->photo ? asset('storage/'.$this->photo) : null;
     }
 
     protected $casts = [
@@ -33,6 +33,11 @@ class Member extends Model
         return $this->hasMany(Deposit::class);
     }
 
+    public function withdrawals()
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
+
     public function ledgerEntries()
     {
         return $this->hasMany(LedgerEntry::class);
@@ -46,5 +51,15 @@ class Member extends Model
     public function totalPendingDeposits(): float
     {
         return $this->deposits()->where('status', 'pending')->sum('amount');
+    }
+
+    public function totalApprovedWithdrawals(): float
+    {
+        return $this->withdrawals()->where('status', 'approved')->sum('amount');
+    }
+
+    public function totalPendingWithdrawals(): float
+    {
+        return $this->withdrawals()->where('status', 'pending')->sum('amount');
     }
 }

@@ -15,9 +15,12 @@ body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 11px; color: #1f2
 .summary .label { color: #6b7280; font-size: 10px; }
 .summary .value { font-weight: bold; font-size: 13px; }
 .income { color: #059669; }
-.expense { color: #dc2626; }
+.withdrawal { color: #dc2626; }
+.expense { color: #ea580c; }
 .net-positive { color: #1d4ed8; }
 .section-title { font-size: 12px; font-weight: bold; color: #065f46; background: #ecfdf5; padding: 7px 12px; border-left: 4px solid #059669; margin-bottom: 0; }
+.section-title.withdrawal { color: #991b1b; background: #fef2f2; border-left-color: #dc2626; }
+.section-title.expense { color: #9a3412; background: #fff7ed; border-left-color: #ea580c; }
 table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
 thead th { background: #065f46; color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: bold; }
 thead th.r { text-align: right; }
@@ -36,7 +39,7 @@ tfoot td.r { text-align: right; }
     <tr>
         <td style="border:none;padding:0;">
             <div class="org-name">ATTONIRVOR</div>
-            <div class="org-sub">Group Savings &amp; Expense Management System</div>
+            <div class="org-sub">Group Savings & Expense Management System</div>
         </td>
         <td style="border:none;padding:0;text-align:right;vertical-align:top;">
             <div class="report-title">Daily Financial Report</div>
@@ -51,12 +54,16 @@ tfoot td.r { text-align: right; }
     <tr style="background:#f0fdf4;">
         <td class="label">Total Income</td>
         <td class="value income">BDT {{ number_format($totalIncome, 2) }}</td>
+        <td class="label">Total Withdrawals</td>
+        <td class="value withdrawal">BDT {{ number_format($totalWithdrawals, 2) }}</td>
         <td class="label">Total Expense</td>
         <td class="value expense">BDT {{ number_format($totalExpense, 2) }}</td>
         <td class="label">Net</td>
         <td class="value net-positive">BDT {{ number_format($net, 2) }}</td>
         <td class="label">Deposits</td>
         <td class="value">{{ $deposits->count() }}</td>
+        <td class="label">Withdrawals</td>
+        <td class="value">{{ $withdrawals->count() }}</td>
         <td class="label">Expenses</td>
         <td class="value">{{ $expenses->count() }}</td>
     </tr>
@@ -98,8 +105,44 @@ tfoot td.r { text-align: right; }
     @endif
 </table>
 
+{{-- Withdrawals --}}
+<div class="section-title withdrawal">Withdrawals ({{ $withdrawals->count() }})</div>
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Member Name</th>
+            <th>Member Code</th>
+            <th class="r">Amount (BDT)</th>
+            <th>Payment Method</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($withdrawals as $i => $w)
+        <tr>
+            <td>{{ $i + 1 }}</td>
+            <td>{{ $w->member->user->name ?? 'N/A' }}</td>
+            <td>{{ $w->member->member_code ?? '—' }}</td>
+            <td class="r withdrawal" style="font-weight:bold;">{{ number_format($w->amount, 2) }}</td>
+            <td>{{ ucfirst($w->payment_method) }}</td>
+        </tr>
+        @empty
+        <tr><td colspan="5" class="no-data">No withdrawals recorded for this date</td></tr>
+        @endforelse
+    </tbody>
+    @if($withdrawals->count())
+    <tfoot style="background:#fef2f2;">
+        <tr>
+            <td colspan="3" style="text-align:right;">Total Withdrawals:</td>
+            <td class="r withdrawal">{{ number_format($totalWithdrawals, 2) }}</td>
+            <td></td>
+        </tr>
+    </tfoot>
+    @endif
+</table>
+
 {{-- Expenses --}}
-<div class="section-title">Expenses ({{ $expenses->count() }})</div>
+<div class="section-title expense">Expenses ({{ $expenses->count() }})</div>
 <table>
     <thead>
         <tr>
@@ -124,8 +167,8 @@ tfoot td.r { text-align: right; }
         @endforelse
     </tbody>
     @if($expenses->count())
-    <tfoot>
-        <tr style="background:#fef2f2;">
+    <tfoot style="background:#fef2f2;">
+        <tr>
             <td colspan="3" style="text-align:right;">Total Expense:</td>
             <td class="r expense">{{ number_format($totalExpense, 2) }}</td>
             <td></td>

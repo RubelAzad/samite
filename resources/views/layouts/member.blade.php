@@ -34,6 +34,10 @@
                    class="px-4 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('member.deposits.*') ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
                     <i class="fas fa-hand-holding-usd mr-1"></i> My Deposits
                 </a>
+                <a href="{{ route('member.withdrawals.index') }}"
+                   class="px-4 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('member.withdrawals.*') ? 'bg-red-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+                    <i class="fas fa-hand-holding-usd mr-1"></i> My Withdrawals
+                </a>
                 <a href="{{ route('member.ledger.index') }}"
                    class="px-4 py-2 rounded-lg text-sm font-medium transition {{ request()->routeIs('member.ledger.*') ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
                     <i class="fas fa-book mr-1"></i> My Ledger
@@ -81,6 +85,10 @@
             <a href="{{ route('member.deposits.index') }}"
                class="flex-1 py-3 text-center text-xs font-medium {{ request()->routeIs('member.deposits.*') ? 'text-emerald-600 border-b-2 border-emerald-600' : 'text-gray-500' }}">
                 <i class="fas fa-hand-holding-usd block text-lg mb-0.5"></i> Deposits
+            </a>
+            <a href="{{ route('member.withdrawals.index') }}"
+               class="flex-1 py-3 text-center text-xs font-medium {{ request()->routeIs('member.withdrawals.*') ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500' }}">
+                <i class="fas fa-hand-holding-usd block text-lg mb-0.5"></i> Withdrawals
             </a>
             <a href="{{ route('member.ledger.index') }}"
                class="flex-1 py-3 text-center text-xs font-medium {{ request()->routeIs('member.ledger.*') ? 'text-emerald-600 border-b-2 border-emerald-600' : 'text-gray-500' }}">

@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Deposit extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'member_id', 'amount', 'date', 'payment_method',
+        'member_id', 'bank_account_id', 'amount', 'date', 'payment_method',
         'status', 'notes', 'attachment', 'rejection_reason', 'approved_by', 'approved_at',
     ];
 
@@ -23,6 +23,11 @@ class Deposit extends Model
     public function member()
     {
         return $this->belongsTo(Member::class);
+    }
+
+    public function bankAccount()
+    {
+        return $this->belongsTo(BankAccount::class);
     }
 
     public function approvedBy()

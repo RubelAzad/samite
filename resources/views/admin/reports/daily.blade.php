@@ -61,15 +61,20 @@
     </form>
 
     <!-- Summary -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500">
             <p class="text-sm text-gray-500">Income Today</p>
             <p class="text-2xl font-bold text-emerald-700">৳{{ number_format($totalIncome, 2) }}</p>
             <p class="text-xs text-gray-400">{{ $deposits->count() }} deposit(s)</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500">
+            <p class="text-sm text-gray-500">Withdrawals Today</p>
+            <p class="text-2xl font-bold text-red-600">৳{{ number_format($totalWithdrawals, 2) }}</p>
+            <p class="text-xs text-gray-400">{{ $withdrawals->count() }} withdrawal(s)</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500">
             <p class="text-sm text-gray-500">Expense Today</p>
-            <p class="text-2xl font-bold text-red-600">৳{{ number_format($totalExpense, 2) }}</p>
+            <p class="text-2xl font-bold text-orange-600">৳{{ number_format($totalExpense, 2) }}</p>
             <p class="text-xs text-gray-400">{{ $expenses->count() }} expense(s)</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500">
@@ -80,7 +85,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Deposits -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100">
@@ -104,6 +109,35 @@
                     </tr>
                     @empty
                     <tr><td colspan="3" class="px-6 py-6 text-center text-gray-400">No deposits</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+            </div>
+        </div>
+
+        <!-- Withdrawals -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h3 class="font-semibold text-gray-800">Withdrawals</h3>
+            </div>
+            <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left font-semibold text-gray-600">Member</th>
+                        <th class="px-6 py-3 text-left font-semibold text-gray-600">Amount</th>
+                        <th class="px-6 py-3 text-left font-semibold text-gray-600">Method</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($withdrawals as $w)
+                    <tr>
+                        <td class="px-6 py-3">{{ $w->member->user->name ?? 'N/A' }}</td>
+                        <td class="px-6 py-3 font-semibold text-red-600">৳{{ number_format($w->amount, 2) }}</td>
+                        <td class="px-6 py-3 capitalize text-gray-600">{{ $w->payment_method }}</td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="3" class="px-6 py-6 text-center text-gray-400">No withdrawals</td></tr>
                     @endforelse
                 </tbody>
             </table>

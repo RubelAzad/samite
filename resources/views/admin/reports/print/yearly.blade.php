@@ -43,11 +43,23 @@ body {
 .sum-label { font-size: 11px; color: #6b7280; font-family: 'Noto Sans', Arial, sans-serif; }
 .sum-val { font-size: 16px; font-weight: 700; margin-top: 2px; font-family: 'Noto Sans', Arial, sans-serif; }
 .income { color: #059669; }
-.expense { color: #dc2626; }
+.withdrawal { color: #dc2626; }
+.expense { color: #ea580c; }
+.net-val { color: #7c3aed; }
 .sec-title {
     font-size: 12px; font-weight: 700; color: #065f46;
     background: #ecfdf5; padding: 8px 14px; border-left: 4px solid #059669;
     margin-bottom: 0; font-family: 'Noto Sans', Arial, sans-serif;
+}
+.sec-title.withdrawal {
+    color: #991b1b;
+    background: #fef2f2;
+    border-left-color: #dc2626;
+}
+.sec-title.expense {
+    color: #9a3412;
+    background: #fff7ed;
+    border-left-color: #ea580c;
 }
 table.data-tbl { width: 100%; border-collapse: collapse; margin-bottom: 22px; }
 table.data-tbl thead th {
@@ -85,7 +97,7 @@ table.data-tbl tfoot td.r { text-align: right; }
         <tr>
             <td>
                 <div class="org-name">ATTONIRVOR</div>
-                <div class="org-sub">Group Savings &amp; Expense Management System</div>
+                <div class="org-sub">Group Savings & Expense Management System</div>
             </td>
             <td style="text-align:right;">
                 <div class="rpt-title">Yearly Financial Report – {{ $year }}</div>
@@ -99,29 +111,32 @@ table.data-tbl tfoot td.r { text-align: right; }
     <table>
         <tr style="background:#f0fdf4;">
             <td><div class="sum-label">Total Income {{ $year }}</div><div class="sum-val income">BDT {{ number_format($totalIncome, 2) }}</div></td>
+            <td><div class="sum-label">Total Withdrawals {{ $year }}</div><div class="sum-val withdrawal">BDT {{ number_format($totalWithdrawals, 2) }}</div></td>
             <td><div class="sum-label">Total Expense {{ $year }}</div><div class="sum-val expense">BDT {{ number_format($totalExpense, 2) }}</div></td>
-            <td><div class="sum-label">Net Savings</div><div class="sum-val" style="color:#7c3aed;">BDT {{ number_format($totalIncome - $totalExpense, 2) }}</div></td>
+            <td><div class="sum-label">Net Savings</div><div class="sum-val net-val">BDT {{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 2) }}</div></td>
         </tr>
     </table>
 </div>
 
 <!-- Monthly Breakdown -->
-<div class="sec-title">Monthly Income vs Expense</div>
+<div class="sec-title">Monthly Income vs Withdrawals vs Expense</div>
 <table class="data-tbl">
     <thead>
         <tr>
             <th>Month</th>
             <th class="r">Income (BDT)</th>
+            <th class="r">Withdrawals (BDT)</th>
             <th class="r">Expense (BDT)</th>
             <th class="r">Net (BDT)</th>
         </tr>
     </thead>
     <tbody>
         @foreach($monthlyData as $md)
-        @php $net = $md['income'] - $md['expense']; @endphp
+        @php $net = $md['income'] - $md['withdrawals'] - $md['expense']; @endphp
         <tr>
             <td>{{ $md['month'] }}</td>
             <td class="r income" style="font-family:'Noto Sans',Arial,sans-serif;">{{ $md['income'] > 0 ? number_format($md['income'], 2) : '—' }}</td>
+            <td class="r withdrawal" style="font-family:'Noto Sans',Arial,sans-serif;">{{ $md['withdrawals'] > 0 ? number_format($md['withdrawals'], 2) : '—' }}</td>
             <td class="r expense" style="font-family:'Noto Sans',Arial,sans-serif;">{{ $md['expense'] > 0 ? number_format($md['expense'], 2) : '—' }}</td>
             <td class="r" style="font-weight:700;font-family:'Noto Sans',Arial,sans-serif;color:{{ $net >= 0 ? '#059669' : '#dc2626' }};">{{ $net != 0 ? number_format($net, 2) : '—' }}</td>
         </tr>
@@ -131,21 +146,24 @@ table.data-tbl tfoot td.r { text-align: right; }
         <tr>
             <td style="font-family:'Noto Sans',Arial,sans-serif;">Annual Total</td>
             <td class="r income" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalIncome, 2) }}</td>
+            <td class="r withdrawal" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalWithdrawals, 2) }}</td>
             <td class="r expense" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalExpense, 2) }}</td>
-            <td class="r" style="color:#7c3aed;font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalIncome - $totalExpense, 2) }}</td>
+            <td class="r net-val" style="color:#7c3aed;font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 2) }}</td>
         </tr>
     </tfoot>
 </table>
 
 <!-- Member Ranking -->
-<div class="sec-title">Member Contribution Ranking</div>
+<div class="sec-title">Member Net Contribution Ranking</div>
 <table class="data-tbl">
     <thead>
         <tr>
             <th style="width:50px;">Rank</th>
             <th>Member Name</th>
             <th>Member Code</th>
-            <th class="r">Total Deposited (BDT)</th>
+            <th class="r">Deposits (BDT)</th>
+            <th class="r">Withdrawals (BDT)</th>
+            <th class="r">Net (BDT)</th>
         </tr>
     </thead>
     <tbody>
@@ -154,7 +172,9 @@ table.data-tbl tfoot td.r { text-align: right; }
             <td style="font-family:'Noto Sans',Arial,sans-serif;">{{ $i + 1 }}</td>
             <td>{{ $m->user->name }}</td>
             <td style="font-family:'Noto Sans',Arial,sans-serif;font-size:11px;color:#6b7280;">{{ $m->member_code }}</td>
-            <td class="r income" style="font-weight:700;font-family:'Noto Sans',Arial,sans-serif;">{{ $m->year_total > 0 ? number_format($m->year_total, 2) : '—' }}</td>
+            <td class="r income" style="font-weight:700;font-family:'Noto Sans',Arial,sans-serif;">{{ $m->year_deposits > 0 ? number_format($m->year_deposits, 2) : '—' }}</td>
+            <td class="r withdrawal" style="font-weight:700;font-family:'Noto Sans',Arial,sans-serif;">{{ $m->year_withdrawals > 0 ? number_format($m->year_withdrawals, 2) : '—' }}</td>
+            <td class="r" style="font-weight:700;font-family:'Noto Sans',Arial,sans-serif;color:{{ $m->year_total >= 0 ? '#059669' : '#dc2626' }};">{{ $m->year_total != 0 ? ($m->year_total >= 0 ? '+' : '') . number_format($m->year_total, 2) : '—' }}</td>
         </tr>
         @endforeach
     </tbody>
@@ -162,12 +182,14 @@ table.data-tbl tfoot td.r { text-align: right; }
         <tr>
             <td colspan="3" style="text-align:right;font-family:'Noto Sans',Arial,sans-serif;">Total:</td>
             <td class="r income" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalIncome, 2) }}</td>
+            <td class="r withdrawal" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalWithdrawals, 2) }}</td>
+            <td class="r net-val" style="color:#7c3aed;font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 2) }}</td>
         </tr>
     </tfoot>
 </table>
 
 <!-- Expense by Category -->
-<div class="sec-title">Expense by Category</div>
+<div class="sec-title expense">Expense by Category</div>
 <table class="data-tbl">
     <thead>
         <tr><th>Category</th><th class="r">Total (BDT)</th></tr>

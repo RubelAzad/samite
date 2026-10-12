@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'title', 'category', 'amount', 'date',
+        'title', 'category', 'bank_account_id', 'amount', 'date',
         'description', 'attachment', 'status', 'created_by',
     ];
 
@@ -24,12 +24,17 @@ class Expense extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function bankAccount()
+    {
+        return $this->belongsTo(BankAccount::class);
+    }
+
     public static function categories(): array
     {
         return [
-            'meeting'       => 'Meeting',
-            'travel'        => 'Travel / Visit',
-            'office'        => 'Office Cost',
+            'meeting' => 'Meeting',
+            'travel' => 'Travel / Visit',
+            'office' => 'Office Cost',
             'communication' => 'Communication',
             'miscellaneous' => 'Miscellaneous',
         ];

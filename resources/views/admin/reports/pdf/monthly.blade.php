@@ -14,8 +14,12 @@ body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 11px; color: #1f2
 .summary .label { color: #6b7280; font-size: 10px; }
 .summary .value { font-weight: bold; font-size: 13px; }
 .income { color: #059669; }
-.expense { color: #dc2626; }
+.withdrawal { color: #dc2626; }
+.expense { color: #ea580c; }
+.net-val { color: #1d4ed8; }
+.balance-val { color: #7c3aed; }
 .section-title { font-size: 12px; font-weight: bold; color: #065f46; background: #ecfdf5; padding: 7px 12px; border-left: 4px solid #059669; margin-bottom: 0; }
+.section-title.withdrawal { color: #991b1b; background: #fef2f2; border-left-color: #dc2626; }
 table.data { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
 table.data thead th { background: #065f46; color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: bold; }
 table.data thead th.r { text-align: right; }
@@ -36,7 +40,7 @@ table.data tfoot td.r { text-align: right; }
     <tr>
         <td style="border:none;padding:0;">
             <div class="org-name">ATTONIRVOR</div>
-            <div class="org-sub">Group Savings &amp; Expense Management System</div>
+            <div class="org-sub">Group Savings & Expense Management System</div>
         </td>
         <td style="border:none;padding:0;text-align:right;vertical-align:top;">
             <div class="report-title">Monthly Financial Report</div>
@@ -51,51 +55,59 @@ table.data tfoot td.r { text-align: right; }
     <tr style="background:#f0fdf4;">
         <td class="label">Total Income</td>
         <td class="value income">BDT {{ number_format($totalIncome, 2) }}</td>
+        <td class="label">Total Withdrawals</td>
+        <td class="value withdrawal">BDT {{ number_format($totalWithdrawals, 2) }}</td>
         <td class="label">Total Expense</td>
         <td class="value expense">BDT {{ number_format($totalExpense, 2) }}</td>
         <td class="label">Net</td>
-        <td class="value" style="color:#1d4ed8;">BDT {{ number_format($net, 2) }}</td>
+        <td class="value net-val">BDT {{ number_format($net, 2) }}</td>
         <td class="label">Fund Balance</td>
-        <td class="value" style="color:#7c3aed;">BDT {{ number_format($balance, 2) }}</td>
+        <td class="value balance-val">BDT {{ number_format($balance, 2) }}</td>
     </tr>
 </table>
 
 {{-- Member Contributions --}}
-<div class="section-title">Member Contributions</div>
+<div class="section-title">Member Net Contributions (Deposits - Withdrawals)</div>
 <table class="data">
     <thead>
         <tr>
             <th>#</th>
             <th>Member Name</th>
             <th>Member Code</th>
-            <th class="r">Amount (BDT)</th>
+            <th class="r">Deposits (BDT)</th>
+            <th class="r">Withdrawals (BDT)</th>
+            <th class="r">Net (BDT)</th>
         </tr>
     </thead>
     <tbody>
         @php $rank = 1; @endphp
-        @forelse($memberDeposits->filter(fn($m) => $m->month_total > 0) as $m)
+        @forelse($memberDeposits as $m)
         <tr>
             <td>{{ $rank++ }}</td>
             <td>{{ $m->user->name }}</td>
             <td>{{ $m->member_code }}</td>
-            <td class="r income" style="font-weight:bold;">{{ number_format($m->month_total, 2) }}</td>
+            <td class="r income" style="font-weight:bold;">{{ number_format($m->month_deposits, 2) }}</td>
+            <td class="r withdrawal" style="font-weight:bold;">{{ number_format($m->month_withdrawals, 2) }}</td>
+            <td class="r" style="font-weight:bold;color:{{ $m->month_total >= 0 ? '#1d4ed8' : '#dc2626' }};">{{ $m->month_total >= 0 ? '+' : '' }}{{ number_format($m->month_total, 2) }}</td>
         </tr>
         @empty
-        <tr><td colspan="4" class="no-data">No contributions this month</td></tr>
+        <tr><td colspan="6" class="no-data">No contributions this month</td></tr>
         @endforelse
     </tbody>
-    @if($totalIncome > 0)
+    @if($totalIncome > 0 || $totalWithdrawals > 0)
     <tfoot>
         <tr>
-            <td colspan="3" style="text-align:right;">Total Income:</td>
+            <td colspan="3" style="text-align:right;">Total:</td>
             <td class="r income">{{ number_format($totalIncome, 2) }}</td>
+            <td class="r withdrawal">{{ number_format($totalWithdrawals, 2) }}</td>
+            <td class="r net-val">{{ $net >= 0 ? '+' : '' }}{{ number_format($net, 2) }}</td>
         </tr>
     </tfoot>
     @endif
 </table>
 
 {{-- Expense Breakdown --}}
-<div class="section-title">Expense Breakdown by Category</div>
+<div class="section-title withdrawal">Expense Breakdown by Category</div>
 <table class="data">
     <thead>
         <tr>

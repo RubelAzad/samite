@@ -62,7 +62,8 @@ body {
 .sum-label { font-size: 11px; color: #6b7280; }
 .sum-val { font-size: 16px; font-weight: 700; margin-top: 2px; font-family: 'Noto Sans', Arial, sans-serif; }
 .income { color: #059669; }
-.expense { color: #dc2626; }
+.withdrawal { color: #dc2626; }
+.expense { color: #ea580c; }
 .net-val { color: #1d4ed8; }
 
 /* Section title */
@@ -71,6 +72,16 @@ body {
     background: #ecfdf5; padding: 8px 14px;
     border-left: 4px solid #059669; margin-bottom: 0;
     font-family: 'Noto Sans', Arial, sans-serif;
+}
+.sec-title.withdrawal {
+    color: #991b1b;
+    background: #fef2f2;
+    border-left-color: #dc2626;
+}
+.sec-title.expense {
+    color: #9a3412;
+    background: #fff7ed;
+    border-left-color: #ea580c;
 }
 
 /* Tables */
@@ -120,7 +131,7 @@ table.data-tbl tfoot td.r { text-align: right; }
         <tr>
             <td>
                 <div class="org-name">ATTONIRVOR</div>
-                <div class="org-sub">Group Savings &amp; Expense Management System</div>
+                <div class="org-sub">Group Savings & Expense Management System</div>
             </td>
             <td style="text-align:right;">
                 <div class="rpt-title">Daily Financial Report</div>
@@ -136,9 +147,11 @@ table.data-tbl tfoot td.r { text-align: right; }
     <table>
         <tr style="background:#f0fdf4;">
             <td><div class="sum-label">Total Income</div><div class="sum-val income">BDT {{ number_format($totalIncome, 2) }}</div></td>
+            <td><div class="sum-label">Total Withdrawals</div><div class="sum-val withdrawal">BDT {{ number_format($totalWithdrawals, 2) }}</div></td>
             <td><div class="sum-label">Total Expense</div><div class="sum-val expense">BDT {{ number_format($totalExpense, 2) }}</div></td>
             <td><div class="sum-label">Net</div><div class="sum-val net-val">BDT {{ number_format($net, 2) }}</div></td>
             <td><div class="sum-label">Deposits</div><div class="sum-val">{{ $deposits->count() }}</div></td>
+            <td><div class="sum-label">Withdrawals</div><div class="sum-val">{{ $withdrawals->count() }}</div></td>
             <td><div class="sum-label">Expenses</div><div class="sum-val">{{ $expenses->count() }}</div></td>
         </tr>
     </table>
@@ -180,8 +193,44 @@ table.data-tbl tfoot td.r { text-align: right; }
     @endif
 </table>
 
+<!-- Withdrawals -->
+<div class="sec-title withdrawal">Withdrawals ({{ $withdrawals->count() }})</div>
+<table class="data-tbl">
+    <thead>
+        <tr>
+            <th style="width:40px;">#</th>
+            <th>Member Name</th>
+            <th>Member Code</th>
+            <th class="r">Amount (BDT)</th>
+            <th>Payment Method</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($withdrawals as $i => $w)
+        <tr>
+            <td>{{ $i + 1 }}</td>
+            <td>{{ $w->member->user->name ?? 'N/A' }}</td>
+            <td style="font-family:'Noto Sans',Arial,sans-serif;font-size:11px;color:#6b7280;">{{ $w->member->member_code ?? '—' }}</td>
+            <td class="r withdrawal" style="font-weight:700;font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($w->amount, 2) }}</td>
+            <td>{{ ucfirst($w->payment_method) }}</td>
+        </tr>
+        @empty
+        <tr><td colspan="5" class="no-data">No withdrawals recorded for this date</td></tr>
+        @endforelse
+    </tbody>
+    @if($withdrawals->count())
+    <tfoot style="background:#fef2f2;">
+        <tr>
+            <td colspan="3" style="text-align:right;font-family:'Noto Sans',Arial,sans-serif;">Total Withdrawals:</td>
+            <td class="r withdrawal" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalWithdrawals, 2) }}</td>
+            <td></td>
+        </tr>
+    </tfoot>
+    @endif
+</table>
+
 <!-- Expenses -->
-<div class="sec-title">Expenses ({{ $expenses->count() }})</div>
+<div class="sec-title expense">Expenses ({{ $expenses->count() }})</div>
 <table class="data-tbl">
     <thead>
         <tr>

@@ -47,7 +47,7 @@
                            class="flex flex-col items-center gap-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-800 py-4 rounded-xl transition text-sm font-semibold">
                             <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
                             Download PDF
-                            <span class="text-xs font-normal text-red-600">print &amp; save</span>
+                            <span class="text-xs font-normal text-red-600">print & save</span>
                         </a>
                     </div>
                     <p class="text-xs text-gray-400 text-center">PDF opens a print-ready page. Select "Save as PDF" in the print dialog.</p>
@@ -67,24 +67,28 @@
     </form>
 
     <!-- Summary -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500">
             <p class="text-sm text-gray-500">Total Income {{ $year }}</p>
             <p class="text-2xl font-bold text-emerald-700">৳{{ number_format($totalIncome, 0) }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500">
+            <p class="text-sm text-gray-500">Total Withdrawals {{ $year }}</p>
+            <p class="text-2xl font-bold text-red-600">৳{{ number_format($totalWithdrawals, 0) }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500">
             <p class="text-sm text-gray-500">Total Expense {{ $year }}</p>
-            <p class="text-2xl font-bold text-red-600">৳{{ number_format($totalExpense, 0) }}</p>
+            <p class="text-2xl font-bold text-orange-600">৳{{ number_format($totalExpense, 0) }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500">
             <p class="text-sm text-gray-500">Net Savings {{ $year }}</p>
-            <p class="text-2xl font-bold text-purple-700">৳{{ number_format($totalIncome - $totalExpense, 0) }}</p>
+            <p class="text-2xl font-bold text-purple-700">৳{{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 0) }}</p>
         </div>
     </div>
 
     <!-- Monthly Chart -->
     <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-        <h3 class="font-semibold text-gray-800 mb-4">Monthly Income vs Expense</h3>
+        <h3 class="font-semibold text-gray-800 mb-4">Monthly Income vs Withdrawals vs Expense</h3>
         <canvas id="yearChart" height="80"></canvas>
     </div>
 
@@ -92,7 +96,7 @@
         <!-- Member Ranking -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100">
-                <h3 class="font-semibold text-gray-800">Member Contribution Ranking</h3>
+                <h3 class="font-semibold text-gray-800">Member Net Contribution Ranking</h3>
             </div>
             <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -100,7 +104,9 @@
                     <tr>
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">Rank</th>
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">Member</th>
-                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Total</th>
+                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Deposits</th>
+                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Withdrawals</th>
+                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Net</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -114,7 +120,11 @@
                             @endif
                         </td>
                         <td class="px-6 py-3 font-medium text-gray-800">{{ $m->user->name }}</td>
-                        <td class="px-6 py-3 text-right font-bold text-emerald-700">৳{{ number_format($m->year_total, 0) }}</td>
+                        <td class="px-6 py-3 text-right font-bold text-emerald-700">৳{{ number_format($m->year_deposits, 0) }}</td>
+                        <td class="px-6 py-3 text-right font-bold text-red-600">৳{{ number_format($m->year_withdrawals, 0) }}</td>
+                        <td class="px-6 py-3 text-right font-bold {{ $m->year_total >= 0 ? 'text-blue-700' : 'text-red-600' }}">
+                            {{ $m->year_total >= 0 ? '+' : '' }}৳{{ number_format($m->year_total, 0) }}
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -168,10 +178,18 @@ new Chart(document.getElementById('yearChart'), {
                 tension: 0.4,
             },
             {
-                label: 'Expense',
-                data: @json(collect($monthlyData)->pluck('expense')),
+                label: 'Withdrawals',
+                data: @json(collect($monthlyData)->pluck('withdrawals')),
                 borderColor: 'rgb(239,68,68)',
                 backgroundColor: 'rgba(239,68,68,0.1)',
+                fill: true,
+                tension: 0.4,
+            },
+            {
+                label: 'Expense',
+                data: @json(collect($monthlyData)->pluck('expense')),
+                borderColor: 'rgb(234,88,12)',
+                backgroundColor: 'rgba(234,88,12,0.1)',
                 fill: true,
                 tension: 0.4,
             },

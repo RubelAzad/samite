@@ -47,7 +47,7 @@
                            class="flex flex-col items-center gap-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-800 py-4 rounded-xl transition text-sm font-semibold">
                             <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
                             Download PDF
-                            <span class="text-xs font-normal text-red-600">print &amp; save</span>
+                            <span class="text-xs font-normal text-red-600">print & save</span>
                         </a>
                     </div>
                     <p class="text-xs text-gray-400 text-center">PDF opens a print-ready page. Select "Save as PDF" in the print dialog.</p>
@@ -94,7 +94,7 @@
             @else — all time
             @endif
         @endif
-        &mdash; <strong>{{ $grandTotal > 0 ? 'Total: ৳' . number_format($grandTotal, 2) : 'No data found' }}</strong>
+        &mdash; <strong>{{ $grandTotal > 0 ? 'Total Deposits: ৳' . number_format($grandTotal, 2) : 'No data found' }}</strong>
     </div>
     @endif
 
@@ -108,7 +108,10 @@
                     <p class="text-xs text-gray-500 mt-0.5">
                         Code: {{ $m->member_code }} &middot;
                         Phone: {{ $m->phone ?? '—' }} &middot;
-                        Total: <span class="font-semibold text-emerald-700">৳{{ number_format($group->total, 2) }}</span>
+                        Deposits: <span class="font-semibold text-emerald-700">৳{{ number_format($group->total, 2) }}</span>
+                        @if($group->withdrawals->count() > 0)
+                        | Withdrawals: <span class="font-semibold text-red-700">৳{{ number_format($group->withdrawals->sum('amount'), 2) }}</span>
+                        @endif
                     </p>
                 </div>
                 <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium">
@@ -122,6 +125,7 @@
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">#</th>
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">Date</th>
                         <th class="px-6 py-3 text-right font-semibold text-gray-600">Amount</th>
+                        <th class="px-6 py-3 text-left font-semibold text-gray-600">Type</th>
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">Payment Method</th>
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">Notes</th>
                     </tr>
@@ -132,6 +136,9 @@
                         <td class="px-6 py-3 text-gray-400 font-mono text-xs">{{ $i + 1 }}</td>
                         <td class="px-6 py-3 text-gray-700">{{ $d->date->format('d M Y') }}</td>
                         <td class="px-6 py-3 text-right font-semibold text-emerald-700">৳{{ number_format($d->amount, 2) }}</td>
+                        <td class="px-6 py-3">
+                            <span class="text-xs px-2 py-1 rounded-full font-medium bg-emerald-100 text-emerald-700">Deposit</span>
+                        </td>
                         <td class="px-6 py-3">
                             <span class="text-xs px-2 py-1 rounded-full font-medium
                                 {{ ($d->payment_method ?? '') === 'cash' ? 'bg-yellow-100 text-yellow-700' : '' }}
@@ -144,13 +151,47 @@
                         <td class="px-6 py-3 text-gray-500 max-w-xs truncate">{{ $d->notes ?? '—' }}</td>
                     </tr>
                     @endforeach
-                </tbody>
-                <tfoot class="bg-emerald-50">
-                    <tr>
-                        <td colspan="2" class="px-6 py-3 text-right font-bold text-gray-700">Subtotal:</td>
-                        <td class="px-6 py-3 text-right font-bold text-emerald-700">৳{{ number_format($group->total, 2) }}</td>
-                        <td colspan="2"></td>
+                    @if(isset($group->withdrawals) && $group->withdrawals->count() > 0)
+                    @foreach($group->withdrawals as $i => $w)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-3 text-gray-400 font-mono text-xs">{{ $i + 1 }}</td>
+                        <td class="px-6 py-3 text-gray-700">{{ $w->date->format('d M Y') }}</td>
+                        <td class="px-6 py-3 text-right font-semibold text-red-600">৳{{ number_format($w->amount, 2) }}</td>
+                        <td class="px-6 py-3">
+                            <span class="text-xs px-2 py-1 rounded-full font-medium bg-red-100 text-red-700">Withdrawal</span>
+                        </td>
+                        <td class="px-6 py-3">
+                            <span class="text-xs px-2 py-1 rounded-full font-medium
+                                {{ ($w->payment_method ?? '') === 'cash' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                {{ ($w->payment_method ?? '') === 'bkash' ? 'bg-pink-100 text-pink-700' : '' }}
+                                {{ ($w->payment_method ?? '') === 'nagad' ? 'bg-orange-100 text-orange-700' : '' }}
+                                {{ ($w->payment_method ?? '') === 'bank' ? 'bg-blue-100 text-blue-700' : '' }}">
+                                {{ ucfirst($w->payment_method ?? '—') }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-3 text-gray-500 max-w-xs truncate">{{ $w->notes ?? '—' }}</td>
                     </tr>
+                    @endforeach
+                    @endif
+                </tbody>
+                <tfoot class="bg-gray-50">
+                    <tr>
+                        <td colspan="2" class="px-6 py-3 text-right font-bold text-gray-700">Deposits:</td>
+                        <td class="px-6 py-3 text-right font-bold text-emerald-700">৳{{ number_format($group->total, 2) }}</td>
+                        <td colspan="3"></td>
+                    </tr>
+                    @if(isset($group->withdrawals) && $group->withdrawals->count() > 0)
+                    <tr>
+                        <td colspan="2" class="px-6 py-3 text-right font-bold text-gray-700">Withdrawals:</td>
+                        <td class="px-6 py-3 text-right font-bold text-red-600">৳{{ number_format($group->withdrawals->sum('amount'), 2) }}</td>
+                        <td colspan="3"></td>
+                    </tr>
+                    <tr class="bg-blue-50">
+                        <td colspan="2" class="px-6 py-3 text-right font-bold text-gray-700">Net:</td>
+                        <td class="px-6 py-3 text-right font-bold text-blue-700">৳{{ number_format($group->total - $group->withdrawals->sum('amount'), 2) }}</td>
+                        <td colspan="3"></td>
+                    </tr>
+                    @endif
                 </tfoot>
             </table>
             </div>
@@ -166,7 +207,7 @@
 
     @if($grandTotal > 0 && $members->count() > 1)
     <div class="mt-6 bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500 flex items-center justify-between">
-        <span class="text-lg font-bold text-gray-800">Grand Total</span>
+        <span class="text-lg font-bold text-gray-800">Grand Total (Deposits)</span>
         <span class="text-2xl font-bold text-emerald-700">৳{{ number_format($grandTotal, 2) }}</span>
     </div>
     @endif

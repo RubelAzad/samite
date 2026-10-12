@@ -14,8 +14,11 @@ body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 11px; color: #1f2
 .summary .label { color: #6b7280; font-size: 10px; }
 .summary .value { font-weight: bold; font-size: 13px; }
 .income { color: #059669; }
-.expense { color: #dc2626; }
+.withdrawal { color: #dc2626; }
+.expense { color: #ea580c; }
+.net-val { color: #7c3aed; }
 .section-title { font-size: 12px; font-weight: bold; color: #065f46; background: #ecfdf5; padding: 7px 12px; border-left: 4px solid #059669; margin-bottom: 0; }
+.section-title.withdrawal { color: #991b1b; background: #fef2f2; border-left-color: #dc2626; }
 table.data { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
 table.data thead th { background: #065f46; color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; font-weight: bold; }
 table.data thead th.r { text-align: right; }
@@ -35,7 +38,7 @@ table.data tfoot td.r { text-align: right; }
     <tr>
         <td style="border:none;padding:0;">
             <div class="org-name">ATTONIRVOR</div>
-            <div class="org-sub">Group Savings &amp; Expense Management System</div>
+            <div class="org-sub">Group Savings & Expense Management System</div>
         </td>
         <td style="border:none;padding:0;text-align:right;vertical-align:top;">
             <div class="report-title">Yearly Financial Report – {{ $year }}</div>
@@ -49,30 +52,34 @@ table.data tfoot td.r { text-align: right; }
     <tr style="background:#f0fdf4;">
         <td class="label">Total Income {{ $year }}</td>
         <td class="value income">BDT {{ number_format($totalIncome, 2) }}</td>
+        <td class="label">Total Withdrawals {{ $year }}</td>
+        <td class="value withdrawal">BDT {{ number_format($totalWithdrawals, 2) }}</td>
         <td class="label">Total Expense {{ $year }}</td>
         <td class="value expense">BDT {{ number_format($totalExpense, 2) }}</td>
         <td class="label">Net Savings</td>
-        <td class="value" style="color:#7c3aed;">BDT {{ number_format($totalIncome - $totalExpense, 2) }}</td>
+        <td class="value net-val">BDT {{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 2) }}</td>
     </tr>
 </table>
 
 {{-- Monthly Breakdown --}}
-<div class="section-title">Monthly Income vs Expense</div>
+<div class="section-title">Monthly Income vs Withdrawals vs Expense</div>
 <table class="data">
     <thead>
         <tr>
             <th>Month</th>
             <th class="r">Income (BDT)</th>
+            <th class="r">Withdrawals (BDT)</th>
             <th class="r">Expense (BDT)</th>
             <th class="r">Net (BDT)</th>
         </tr>
     </thead>
     <tbody>
         @foreach($monthlyData as $md)
-        @php $net = $md['income'] - $md['expense']; @endphp
+        @php $net = $md['income'] - $md['withdrawals'] - $md['expense']; @endphp
         <tr>
             <td>{{ $md['month'] }}</td>
             <td class="r income">{{ $md['income'] > 0 ? number_format($md['income'], 2) : '—' }}</td>
+            <td class="r withdrawal">{{ $md['withdrawals'] > 0 ? number_format($md['withdrawals'], 2) : '—' }}</td>
             <td class="r expense">{{ $md['expense'] > 0 ? number_format($md['expense'], 2) : '—' }}</td>
             <td class="r" style="font-weight:bold;color:{{ $net >= 0 ? '#059669' : '#dc2626' }};">
                 {{ $net != 0 ? number_format($net, 2) : '—' }}
@@ -84,21 +91,24 @@ table.data tfoot td.r { text-align: right; }
         <tr>
             <td style="font-weight:bold;">Annual Total</td>
             <td class="r income">{{ number_format($totalIncome, 2) }}</td>
+            <td class="r withdrawal">{{ number_format($totalWithdrawals, 2) }}</td>
             <td class="r expense">{{ number_format($totalExpense, 2) }}</td>
-            <td class="r" style="color:#7c3aed;font-weight:bold;">{{ number_format($totalIncome - $totalExpense, 2) }}</td>
+            <td class="r net-val" style="color:#7c3aed;font-weight:bold;">{{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 2) }}</td>
         </tr>
     </tfoot>
 </table>
 
 {{-- Member Ranking --}}
-<div class="section-title">Member Contribution Ranking</div>
+<div class="section-title">Member Net Contribution Ranking</div>
 <table class="data">
     <thead>
         <tr>
             <th>Rank</th>
             <th>Member Name</th>
             <th>Member Code</th>
-            <th class="r">Total Deposited (BDT)</th>
+            <th class="r">Deposits (BDT)</th>
+            <th class="r">Withdrawals (BDT)</th>
+            <th class="r">Net (BDT)</th>
         </tr>
     </thead>
     <tbody>
@@ -107,7 +117,9 @@ table.data tfoot td.r { text-align: right; }
             <td>{{ $i + 1 }}</td>
             <td>{{ $m->user->name }}</td>
             <td>{{ $m->member_code }}</td>
-            <td class="r income" style="font-weight:bold;">{{ $m->year_total > 0 ? number_format($m->year_total, 2) : '—' }}</td>
+            <td class="r income" style="font-weight:bold;">{{ $m->year_deposits > 0 ? number_format($m->year_deposits, 2) : '—' }}</td>
+            <td class="r withdrawal" style="font-weight:bold;">{{ $m->year_withdrawals > 0 ? number_format($m->year_withdrawals, 2) : '—' }}</td>
+            <td class="r" style="font-weight:bold;color:{{ $m->year_total >= 0 ? '#059669' : '#dc2626' }};">{{ $m->year_total != 0 ? ($m->year_total >= 0 ? '+' : '') . number_format($m->year_total, 2) : '—' }}</td>
         </tr>
         @endforeach
     </tbody>
@@ -115,12 +127,14 @@ table.data tfoot td.r { text-align: right; }
         <tr>
             <td colspan="3" style="text-align:right;">Total:</td>
             <td class="r income">{{ number_format($totalIncome, 2) }}</td>
+            <td class="r withdrawal">{{ number_format($totalWithdrawals, 2) }}</td>
+            <td class="r net-val" style="color:#7c3aed;font-weight:bold;">{{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 2) }}</td>
         </tr>
     </tfoot>
 </table>
 
 {{-- Expense by Category --}}
-<div class="section-title">Expense by Category</div>
+<div class="section-title withdrawal">Expense by Category</div>
 <table class="data">
     <thead>
         <tr>

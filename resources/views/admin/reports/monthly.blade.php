@@ -27,7 +27,7 @@
                 </div>
                 <div class="p-6 space-y-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Select Month &amp; Year</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Select Month & Year</label>
                         <input type="month" x-model="exportMonth"
                                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
@@ -43,7 +43,7 @@
                            class="flex flex-col items-center gap-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-800 py-4 rounded-xl transition text-sm font-semibold">
                             <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
                             Download PDF
-                            <span class="text-xs font-normal text-red-600">print &amp; save</span>
+                            <span class="text-xs font-normal text-red-600">print & save</span>
                         </a>
                     </div>
                     <p class="text-xs text-gray-400 text-center">PDF opens a print-ready page. Select "Save as PDF" in the print dialog.</p>
@@ -60,14 +60,18 @@
     </form>
 
     <!-- Summary -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500">
             <p class="text-xs text-gray-500">Total Income</p>
             <p class="text-xl font-bold text-emerald-700">৳{{ number_format($totalIncome, 0) }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500">
+            <p class="text-xs text-gray-500">Total Withdrawals</p>
+            <p class="text-xl font-bold text-red-600">৳{{ number_format($totalWithdrawals, 0) }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-orange-500">
             <p class="text-xs text-gray-500">Total Expense</p>
-            <p class="text-xl font-bold text-red-600">৳{{ number_format($totalExpense, 0) }}</p>
+            <p class="text-xl font-bold text-orange-600">৳{{ number_format($totalExpense, 0) }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500">
             <p class="text-xs text-gray-500">Net</p>
@@ -83,7 +87,7 @@
         <!-- Member Contributions -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100">
-                <h3 class="font-semibold text-gray-800">Member Contributions</h3>
+                <h3 class="font-semibold text-gray-800">Member Net Contributions (Deposits - Withdrawals)</h3>
             </div>
             <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -91,7 +95,9 @@
                     <tr>
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">Rank</th>
                         <th class="px-6 py-3 text-left font-semibold text-gray-600">Member</th>
-                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Amount</th>
+                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Deposits</th>
+                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Withdrawals</th>
+                        <th class="px-6 py-3 text-right font-semibold text-gray-600">Net</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -99,12 +105,14 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-3 text-gray-400 font-mono">{{ $i + 1 }}</td>
                         <td class="px-6 py-3 font-medium text-gray-800">{{ $m->user->name }}</td>
-                        <td class="px-6 py-3 text-right font-semibold {{ $m->month_total > 0 ? 'text-emerald-700' : 'text-gray-400' }}">
-                            ৳{{ number_format($m->month_total, 0) }}
+                        <td class="px-6 py-3 text-right font-semibold text-emerald-700">৳{{ number_format($m->month_deposits, 0) }}</td>
+                        <td class="px-6 py-3 text-right font-semibold text-red-600">৳{{ number_format($m->month_withdrawals, 0) }}</td>
+                        <td class="px-6 py-3 text-right font-semibold {{ $m->month_total > 0 ? 'text-blue-700' : 'text-red-600' }}">
+                            {{ $m->month_total >= 0 ? '+' : '' }}৳{{ number_format($m->month_total, 0) }}
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="3" class="px-6 py-6 text-center text-gray-400">No data</td></tr>
+                    <tr><td colspan="5" class="px-6 py-6 text-center text-gray-400">No data</td></tr>
                     @endforelse
                 </tbody>
             </table>

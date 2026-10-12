@@ -47,13 +47,21 @@ body {
 .sum-label { font-size: 10px; color: #6b7280; font-family: 'Noto Sans', Arial, sans-serif; }
 .sum-val { font-size: 15px; font-weight: 700; margin-top: 2px; font-family: 'Noto Sans', Arial, sans-serif; }
 .income { color: #059669; }
-.expense { color: #dc2626; }
+.withdrawal { color: #dc2626; }
+.expense { color: #ea580c; }
+.net-val { color: #1d4ed8; }
+.balance-val { color: #7c3aed; }
 
 /* Section title */
 .sec-title {
     font-size: 11px; font-weight: 700; color: #065f46;
     background: #ecfdf5; padding: 7px 12px; border-left: 4px solid #059669;
     margin-bottom: 0; font-family: 'Noto Sans', Arial, sans-serif;
+}
+.sec-title.withdrawal {
+    color: #991b1b;
+    background: #fef2f2;
+    border-left-color: #dc2626;
 }
 
 /* Tables */
@@ -81,6 +89,7 @@ table.matrix-tbl thead th.r { text-align: right; }
 table.matrix-tbl tbody td { padding: 5px 8px; border: 1px solid #e5e7eb; }
 table.matrix-tbl tbody td.r { text-align: right; }
 table.matrix-tbl tbody td.amt { text-align: right; font-family: 'Noto Sans', Arial, sans-serif; color: #059669; font-weight: 600; }
+table.matrix-tbl tbody td.amt-wdr { text-align: right; font-family: 'Noto Sans', Arial, sans-serif; color: #dc2626; font-weight: 600; }
 table.matrix-tbl tbody td.zero { text-align: right; color: #d1d5db; }
 table.matrix-tbl tbody tr:nth-child(even) td { background: #fafafa; }
 table.matrix-tbl tfoot td { padding: 6px 8px; font-weight: 700; background: #ecfdf5; border: 1px solid #059669; font-family: 'Noto Sans', Arial, sans-serif; color: #065f46; }
@@ -112,7 +121,7 @@ table.matrix-tbl tfoot td.r { text-align: right; }
         <tr>
             <td>
                 <div class="org-name">ATTONIRVOR</div>
-                <div class="org-sub">Group Savings &amp; Expense Management System</div>
+                <div class="org-sub">Group Savings & Expense Management System</div>
             </td>
             <td style="text-align:right;">
                 <div class="rpt-title">Full Summary Report</div>
@@ -128,31 +137,39 @@ table.matrix-tbl tfoot td.r { text-align: right; }
     <table>
         <tr style="background:#f0fdf4;">
             <td><div class="sum-label">Total Collected</div><div class="sum-val income">BDT {{ number_format($totalIncome, 2) }}</div></td>
+            <td><div class="sum-label">Total Withdrawals</div><div class="sum-val withdrawal">BDT {{ number_format($totalWithdrawals, 2) }}</div></td>
             <td><div class="sum-label">Total Expenses</div><div class="sum-val expense">BDT {{ number_format($totalExpense, 2) }}</div></td>
-            <td><div class="sum-label">Net Savings</div><div class="sum-val" style="color:#1d4ed8;">BDT {{ number_format($totalIncome - $totalExpense, 2) }}</div></td>
-            <td><div class="sum-label">Fund Balance</div><div class="sum-val" style="color:#7c3aed;">BDT {{ number_format($balance, 2) }}</div></td>
+            <td><div class="sum-label">Net Savings</div><div class="sum-val net-val">BDT {{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 2) }}</div></td>
+            <td><div class="sum-label">Fund Balance</div><div class="sum-val balance-val">BDT {{ number_format($balance, 2) }}</div></td>
             <td><div class="sum-label">Period</div><div class="sum-val" style="font-size:12px;color:#374151;">{{ count($months) }} months</div></td>
         </tr>
     </table>
 </div>
 
 <!-- Monthly Breakdown -->
-<div class="sec-title">Monthly Income vs Expense</div>
+<div class="sec-title">Monthly Income vs Withdrawals vs Expense</div>
 <table class="data-tbl">
     <thead>
         <tr>
             <th>Month</th>
             <th class="r">Income (BDT)</th>
+            <th class="r">Withdrawals (BDT)</th>
             <th class="r">Expense (BDT)</th>
             <th class="r">Net (BDT)</th>
         </tr>
     </thead>
     <tbody>
         @foreach($months as $label)
-        @php $inc = $monthlyTotals[$label]['income'] ?? 0; $exp = $monthlyTotals[$label]['expense'] ?? 0; $net = $inc - $exp; @endphp
+        @php 
+            $inc = $monthlyTotals[$label]['income'] ?? 0; 
+            $wdr = $monthlyTotals[$label]['withdrawals'] ?? 0; 
+            $exp = $monthlyTotals[$label]['expense'] ?? 0; 
+            $net = $inc - $wdr - $exp; 
+        @endphp
         <tr>
             <td>{{ $label }}</td>
             <td class="r income" style="font-family:'Noto Sans',Arial,sans-serif;">{{ $inc > 0 ? number_format($inc, 2) : '—' }}</td>
+            <td class="r withdrawal" style="font-family:'Noto Sans',Arial,sans-serif;">{{ $wdr > 0 ? number_format($wdr, 2) : '—' }}</td>
             <td class="r expense" style="font-family:'Noto Sans',Arial,sans-serif;">{{ $exp > 0 ? number_format($exp, 2) : '—' }}</td>
             <td class="r" style="font-weight:700;font-family:'Noto Sans',Arial,sans-serif;color:{{ $net >= 0 ? '#059669' : '#dc2626' }};">{{ $net != 0 ? number_format($net, 2) : '—' }}</td>
         </tr>
@@ -162,13 +179,14 @@ table.matrix-tbl tfoot td.r { text-align: right; }
         <tr>
             <td>Grand Total</td>
             <td class="r income" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalIncome, 2) }}</td>
+            <td class="r withdrawal" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalWithdrawals, 2) }}</td>
             <td class="r expense" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalExpense, 2) }}</td>
-            <td class="r" style="color:#1d4ed8;font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalIncome - $totalExpense, 2) }}</td>
+            <td class="r net-val" style="font-family:'Noto Sans',Arial,sans-serif;">{{ number_format($totalIncome - $totalWithdrawals - $totalExpense, 2) }}</td>
         </tr>
     </tfoot>
 </table>
 
-<!-- Member × Month Matrix -->
+<!-- Member × Month Matrix (Deposits) -->
 <div class="sec-title">Member Deposit Matrix — Month-wise (BDT)</div>
 <table class="matrix-tbl">
     <thead>
@@ -211,9 +229,52 @@ table.matrix-tbl tfoot td.r { text-align: right; }
     </tfoot>
 </table>
 
+<!-- Member × Month Matrix (Withdrawals) -->
+<div class="sec-title withdrawal">Member Withdrawal Matrix — Month-wise (BDT)</div>
+<table class="matrix-tbl">
+    <thead>
+        <tr>
+            <th style="text-align:left;min-width:130px;">Member Name</th>
+            <th class="c" style="min-width:60px;">Code</th>
+            @foreach($months as $label)
+            <th class="r" style="min-width:72px;">{{ $label }}</th>
+            @endforeach
+            <th class="r" style="background:#374151;min-width:78px;">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($members as $m)
+        @php $memberTotal = collect($months)->sum(fn($label) => $withdrawalMatrix[$m->id][$label] ?? 0); @endphp
+        <tr>
+            <td>{{ $m->user->name }}</td>
+            <td style="text-align:center;font-family:'Noto Sans',Arial,sans-serif;color:#6b7280;font-size:9px;">{{ $m->member_code }}</td>
+            @foreach($months as $label)
+            @php $amt = $withdrawalMatrix[$m->id][$label] ?? 0; @endphp
+            @if($amt > 0)
+            <td class="amt-wdr">{{ number_format($amt, 0) }}</td>
+            @else
+            <td class="zero">—</td>
+            @endif
+            @endforeach
+            <td class="r" style="font-weight:700;font-family:'Noto Sans',Arial,sans-serif;background:#fef2f2;color:#991b1b;">{{ $memberTotal > 0 ? number_format($memberTotal, 0) : '—' }}</td>
+        </tr>
+        @endforeach
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>Monthly Total</td>
+            <td></td>
+            @foreach($months as $label)
+            <td class="r">{{ number_format($monthlyTotals[$label]['withdrawals'] ?? 0, 0) }}</td>
+            @endforeach
+            <td class="r">{{ number_format($totalWithdrawals, 0) }}</td>
+        </tr>
+    </tfoot>
+</table>
+
 <!-- Expense Breakdown -->
 @if($expenseBreakdown->count())
-<div class="sec-title">Expense Breakdown by Category</div>
+<div class="sec-title withdrawal">Expense Breakdown by Category</div>
 <table class="data-tbl" style="max-width:400px;">
     <thead>
         <tr><th>Category</th><th class="r">Total (BDT)</th></tr>

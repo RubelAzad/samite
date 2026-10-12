@@ -87,6 +87,12 @@
                             <a href="{{ route('admin.deposits.show', $deposit) }}" class="text-blue-600 hover:text-blue-800 p-1" title="View">
                                 <i class="fas fa-eye"></i>
                             </a>
+                            <a href="{{ route('admin.deposits.receipt', $deposit) }}" target="_blank" class="text-emerald-600 hover:text-emerald-800 p-1" title="Receipt">
+                                <i class="fas fa-receipt"></i>
+                            </a>
+                            <a href="{{ route('admin.deposits.edit', $deposit) }}" class="text-indigo-600 hover:text-indigo-800 p-1" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
                             @if($deposit->isPending())
                             <form method="POST" action="{{ route('admin.deposits.approve', $deposit) }}" class="inline">
                                 @csrf
@@ -113,6 +119,15 @@
                                     </form>
                                 </div>
                             </div>
+                            @endif
+                            @if(!$deposit->isApproved())
+                            <form method="POST" action="{{ route('admin.deposits.destroy', $deposit) }}" class="inline" onsubmit="return confirm('Delete this deposit?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 p-1" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                             @endif
                         </div>
                     </td>
